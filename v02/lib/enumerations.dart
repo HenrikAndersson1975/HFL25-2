@@ -1,3 +1,5 @@
 enum Action {
-  addHero, showHeroes, searchHero, exit
+  addHero, listHeroes, searchHero, exit
 }
+
+

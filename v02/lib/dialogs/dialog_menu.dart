@@ -1,5 +1,7 @@
 import 'dart:io';
-import 'enumerations.dart';
+import 'package:v02/dialogs/dialogs_helper.dart';
+
+import '../enumerations.dart';
 
 class MenuOption 
 { 
@@ -8,13 +10,15 @@ class MenuOption
   MenuOption(this.action, this.text);
 }
 
-Action selectActionFromMenu(String header, List<MenuOption> menuOptions, String prompt) {
+Action dialogMenu(String header, List<MenuOption> menuOptions, String prompt) {
 
   Action? selectedAction;
 
+  clearScreen();
+
   // kör tills användaren gör ett giltigt val
   while (selectedAction == null) {
-    
+ 
     // skriver ut rubrik
     print('\n$header');
 
