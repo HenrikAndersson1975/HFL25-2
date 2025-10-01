@@ -12,9 +12,14 @@ void dialogAddHero(List<Map<String, dynamic>> heroes) {
 
   clearScreen();
 
-  int id = getNextHeroId(heroes);
+  
 
-  Map<String, dynamic> newHero = createRandomHero(id);
+  Map<String, dynamic> newHero = createRandomHero();  // <--- ska ersättas med att man matar in olika egenskaper
+
+  //newHero = createHero(name, strength, gender, alignment);
+
+
+  addHeroToList(newHero, heroes);
 
   // lägg till den nya hjälten i listan
   heroes.add(newHero);

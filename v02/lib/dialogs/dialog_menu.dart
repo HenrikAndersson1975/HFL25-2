@@ -1,23 +1,22 @@
 import 'dart:io';
 import 'package:v02/dialogs/dialogs_helper.dart';
 
-import '../enumerations.dart';
 
-class MenuOption 
+class MenuOption<T> 
 { 
-  final String text;
-  final Action action;
-  MenuOption(this.action, this.text);
+  final String text;  // den text som står vid alternativet i menyn
+  final T value; // det värde som returneras när användaren gjort menyval
+  MenuOption(this.value, this.text);
 }
 
-Action dialogMenu(String header, List<MenuOption> menuOptions, String prompt) {
+T dialogMenu<T>(String header, List<MenuOption<T>> menuOptions, String prompt) {
 
-  Action? selectedAction;
+  T? selectedValue;
 
   clearScreen();
 
   // kör tills användaren gör ett giltigt val
-  while (selectedAction == null) {
+  while (selectedValue == null) {
  
     // skriver ut rubrik
     print('\n$header');
@@ -29,7 +28,7 @@ Action dialogMenu(String header, List<MenuOption> menuOptions, String prompt) {
       print('$optionNumber. $text');
     }
   
-    // frågar användaren efter val och försöker översätta input till int
+    // frågar användaren efter ett alternativ och försöker översätta input till int
     stdout.write(prompt);
     int? selectedOptionNumber = int.tryParse(stdin.readLineSync() ?? '');
 
@@ -39,10 +38,10 @@ Action dialogMenu(String header, List<MenuOption> menuOptions, String prompt) {
     } else {
       // hämtar motsvarande action från menyalternativen
       int optionIndex = selectedOptionNumber - 1;  
-      selectedAction = menuOptions[optionIndex].action;  
+      selectedValue = menuOptions[optionIndex].value;  
     }
   }
 
   // giltigt alternativ har valts, returnerar action
-  return selectedAction;
+  return selectedValue;
 }

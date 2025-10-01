@@ -1,67 +1,18 @@
 
+import 'package:v02/hero_creator.dart';
+import 'package:v02/heroes_list_functions.dart';
+
 List<Map<String, dynamic>> getPredefinedHeroes() {
-  List<Map<String, dynamic>> heroes = [
-      {
-        "id": "1",
 
-        "name": "Lisa",
-        "powerstats": {
-          "strength": "12"      
-        },
-        "appearance": {
-          "gender": "Kvinna",
-          "race": "Människa",
-        },
-        "biography": {
-          "alignment": "god",
-        }
-      },
-      {
-        "id": "2",
+  List<Map<String, dynamic>> heroes = [];
 
-        "name": "Janne",
-        "powerstats": {
-          "strength": "100"         
-        },
-        "appearance": {
-          "gender": "Man",
-          "race": "Människa",
-        },
-        "biography": {
-          "alignment": "ond",
-        }
-      },
-      {
-        "id": "3",
-
-        "name": "Klas",
-        "powerstats": {
-          "strength": "20"         
-        },
-        "appearance": {
-          "gender": "Man",
-          "race": "Människa",
-        },
-        "biography": {
-          "alignment": "god",
-        }
-      },  
-      {
-        "id": "4",
-
-        "name": "Petra",
-        "powerstats": {
-          "strength": "88"         
-        },
-        "appearance": {
-          "gender": "Kvinna",
-          "race": "Människa",
-        },
-        "biography": {
-          "alignment": "god",
-        }
-      }
-    ];
+  addHeroToList(createHero("Lisa", 12, "Kvinna", "god"), heroes);
+  addHeroToList(createHero("Janne", 100, "Man", "ond"), heroes);
+  addHeroToList(createHero("Klas", 20, "Man", "god"), heroes);
+  addHeroToList(createHero("Petra", 88, "Kvinna", "god"), heroes);
 
   return heroes;
-}
+} 
+
+
+   

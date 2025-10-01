@@ -1,10 +1,10 @@
 import 'dart:math';  // ev ta bort sedan, används för random
 
-Map<String, dynamic> createHero(int id, String name, int strength, String gender, String alignment) {
+Map<String, dynamic> createHero(String name, int strength, String gender, String alignment) {
 
   Map<String, dynamic> hero = {
 
-    "id": id.toString(),
+    "id": "-1",  // id sätts när hjälten läggs till i listan
 
     "name": name,
     "powerstats": {
@@ -23,7 +23,7 @@ Map<String, dynamic> createHero(int id, String name, int strength, String gender
 }
 
 
-Map<String, dynamic> createRandomHero(int id) {
+Map<String, dynamic> createRandomHero() {
   var random = Random();
   
   String randomName;
@@ -53,7 +53,7 @@ Map<String, dynamic> createRandomHero(int id) {
   
   
   // skapa en ny hjälte
-  Map<String, dynamic> newHero = createHero(id, randomName, randomStrength, randomGender, randomAlignment);
+  Map<String, dynamic> newHero = createHero(randomName, randomStrength, randomGender, randomAlignment);
 
     
   return newHero;

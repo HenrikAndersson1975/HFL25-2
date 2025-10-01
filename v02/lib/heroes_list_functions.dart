@@ -40,3 +40,11 @@ void orderHeroesByStrength(List<Map<String, dynamic>> heroes) {
     return strengthB.compareTo(strengthA); // Sortera i fallande ordning
   });
 }
+
+
+/// Lägger till ny hjälte till lista
+void addHeroToList(Map<String, dynamic> newHero, List<Map<String, dynamic>> heroes) {
+  int newHeroId = getNextHeroId(heroes);
+  newHero['id'] = newHeroId.toString();
+  heroes.add(newHero);
+}
