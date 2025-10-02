@@ -15,33 +15,33 @@ T dialogMenu<T>(String header, List<MenuOption<T>> menuOptions, String prompt) {
 
   clearScreen();
 
-  // kör tills användaren gör ett giltigt val
+  // Kör tills användaren gör ett giltigt val
   while (selectedValue == null) {
  
-    // skriver ut rubrik
-    print('\n$header');
+    // Skriver ut rubrik
+    print(header);
 
-    // skriver ut menyalternativen 
+    // Skriver ut menyalternativen 
     for (int i=0; i<menuOptions.length; i++) {
       String optionNumber = (i + 1).toString();  // ordningsnummer i listan, det nummer som användaren ska ange
       String text = menuOptions[i].text;   
       print('$optionNumber. $text');
     }
   
-    // frågar användaren efter ett alternativ och försöker översätta input till int
+    // Frågar användaren efter ett alternativ och försöker översätta input till int
     stdout.write(prompt);
     int? selectedOptionNumber = int.tryParse(stdin.readLineSync() ?? '');
 
-    // kollar om valt nummer är mellan 1 och antal menyalternativ
+    // Kollar om valt nummer är mellan 1 och antal menyalternativ
     if (selectedOptionNumber == null || selectedOptionNumber < 1 || selectedOptionNumber > menuOptions.length) {
       print('\nOgiltigt val, försök igen.\n');
     } else {
-      // hämtar motsvarande action från menyalternativen
+      // Hämtar motsvarande värde från menyalternativen
       int optionIndex = selectedOptionNumber - 1;  
       selectedValue = menuOptions[optionIndex].value;  
     }
   }
 
-  // giltigt alternativ har valts, returnerar action
+  // Giltigt alternativ har valts, returnerar vald menuOptions value
   return selectedValue;
 }

@@ -1,21 +1,5 @@
 import 'dart:io';
 
-
-
-
-void printHeroes(List<Map<String, dynamic>> heroes) {
-  for (var hero in heroes) {
-    printHero(hero);
-  }
-}
-
-void printHero(Map<String, dynamic> hero) {
-  String name = hero['name'] ?? 'Okänt namn';
-  String strength = hero['powerstats']?['strength'] ?? 'Okänd styrka';
-  print('Namn: $name, Styrka: $strength');
-}
-
-
 void clearScreen() {
   print("\x1B[2J\x1B[0;0H");
 }
@@ -97,8 +81,6 @@ int getIntegerFromUser(String prompt, int? min, int? max) {
   // Returnera valt tal
   return value;
 }
-
-
 
 
 void waitForEnter(String prompt) {

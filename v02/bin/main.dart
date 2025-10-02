@@ -1,35 +1,29 @@
 import 'package:v02/dialogs/dialogs.dart'; 
-import 'package:v02/enumerations.dart';
-import 'package:v02/hero_creator.dart';
-import 'package:v02/heroes_file_handler.dart' as heroes_file_handler;
-import 'package:v02/heroes_list_functions.dart';
-import 'package:v02/predefined_heroes.dart';
+import 'package:v02/file.dart' as file;
+import 'package:v02/extensions.dart';
+import 'dart:convert';
 
 void main(List<String> arguments) {
   
-
+  
   clearScreen();  
 
   // letar efter sökväg till fil bland argument.
-  String? heroesFilePath = getFilePathFromArguments(arguments);  
+  String? heroesFilePath = _getFilePathFromArguments(arguments);  
 
 
   // ladda hjältar från fil eller starta med fördefinierade hjältar
-  List<Map<String, dynamic>> heroes = initHeroes(heroesFilePath);
-
-
-
-  
-  
+  List<Map<String, dynamic>> heroes = dialogInitHeroes(heroesFilePath);
 
   // skriv ut antal hjältar som har laddats
-  print('\nProgrammet startar med ${heroes.length} ${heroes.length == 1 ? 'hjälte' : 'hjältar'}.');
-  waitForEnter("\nTryck på Enter för att komma till menyn.");
+  clearScreen();
+  print('--- Hjältelista initierad ---');
+  print('Programmet startar med ${heroes.length} ${heroes.length == 1 ? 'hjälte' : 'hjältar'}.');
+  print('');
+  _waitForEnterToContinue();
 
-  // menyrubrik
-  String menuHeader = '=== MENY ===';
 
-  // menyalternativ
+  // alternativ i huvudmenyn
   List<MenuOption<MainMenuAction>> menuOptions = [
     MenuOption(MainMenuAction.addHero, 'Lägg till hjälte'),
     MenuOption(MainMenuAction.listHeroes, 'Visa hjältar'),
@@ -37,27 +31,29 @@ void main(List<String> arguments) {
     MenuOption(MainMenuAction.exit, 'Avsluta')   
   ];
 
-  // uppmaning till användaren
-  String menuPrompt = 'Välj ett alternativ: ';
-
-
-
+  
   bool isRunning = true;  // sätts till false för att avsluta programmet
 
   while (isRunning) {
     
     // användaren gör ett val från menyn
-    MainMenuAction action = dialogMenu<MainMenuAction>(menuHeader, menuOptions, menuPrompt);
+    MainMenuAction menuChoice = dialogMenu<MainMenuAction>('=== MENY ===', menuOptions, 'Välj ett alternativ: ');
 
     // hantera valt alternativ
-    switch (action) {
+    switch (menuChoice) {
       case MainMenuAction.addHero:
-
-        // TODO
-
+       
+        Map<String, dynamic>? newHero = dialogCreateHero();
         
-        dialogAddHero(heroes);
-        
+        if (newHero != null) {
+          heroes.addHeroToList(newHero);
+
+          clearScreen();
+          print('--- Ny hjäte har skapats ---');
+          newHero.display();
+          print('');
+          _waitForEnterToContinue();
+        }
         break;
 
       case MainMenuAction.listHeroes:
@@ -69,201 +65,112 @@ void main(List<String> arguments) {
         break;
 
       case MainMenuAction.exit:    
+        bool exit = dialogExit();
 
-        // fråga om användaren vill spara hjältarna till fil
-        saveHeroes(heroes, heroesFilePath);
-     
-        // fråga användaren om den vill avsluta
-        isRunning = !acceptOrDecline("\nÄr du säker på att du vill avsluta programmet? (j/n) ", "j", "n");
-        
-        break;
-    }
-  }
-}
-
-
-List<Map<String, dynamic>> initHeroes(String? filePath) {
-
-  List<Map<String, dynamic>> heroes = [];
-
-  // Om en fil har angivits försök att ladda hjältar från filen
-  if (filePath != null) {
-    var (success, loadedHeroes) = tryLoadHeroes(filePath);
-    if (success && loadedHeroes.isNotEmpty) {
-      heroes = loadedHeroes;  
-    }
-  }
-
-  // Om inga hjältar har laddats, visa en meny för användaren
-  if (heroes.isEmpty) {
-    InitHeroesAction action;
-    {
-      List<MenuOption<InitHeroesAction>> menuOptions = [
-        MenuOption(InitHeroesAction.loadFromFile, 'Ladda hjältar från en fil'),
-        MenuOption(InitHeroesAction.usePredefinedHeroes, 'Ladda fördefinierade hjältar'),
-        MenuOption(InitHeroesAction.createRandomizedHeroes, 'Skapa hjältar med slumpmässigt skapade egenskaper'),
-        MenuOption(InitHeroesAction.noHeroes, 'Starta utan hjältar')   
-      ];
-      action = dialogMenu<InitHeroesAction>('Hur vill du initiera listan med hjältar?', menuOptions, 'Välj ett alternativ: ');
-    }
-
-    switch (action) {
-      case InitHeroesAction.loadFromFile:
-        heroes = loadHeroes();
-        break;
-      case InitHeroesAction.usePredefinedHeroes:
-        heroes = getPredefinedHeroes();   
-        break;
-      case InitHeroesAction.createRandomizedHeroes:   
-        int numberOfHeroesToCreate = getIntegerFromUser("\nHur många hjältar vill du skapa? ", 0, 30);
-        for (int i=0; i<numberOfHeroesToCreate; i++) {
-          Map<String, dynamic> newHero = createRandomHero();
-          addHeroToList(newHero, heroes);
-        }
-        break;
-      case InitHeroesAction.noHeroes:
-        heroes = [];
-        break;
-    }
-  }
-
-  return heroes;
-}
-
-
-List<Map<String, dynamic>> loadHeroes() {
-
-  List<Map<String, dynamic>> loadedHeroes = [];
-
-  bool tryLoad = true;
-
-  while (tryLoad) {
-    
-    // frågar användaren efter en fil att ladda hjältarna från
-    String? loadPath = dialogFilePath(null);
-
-    // försöker att ladda hjältarna från fil  
-    var (success, loadedHeroes) = tryLoadHeroes(loadPath);
-
-    // om det gick bra, försök inte att ladda igen
-    if (success && loadedHeroes.isNotEmpty) {
-      tryLoad = false;  
-    }
-
-    // om det inte gick bra, ge användaren möjlighet att ange annan fil att ladda från
-    else {    
-      // 
-      if (loadPath != null) {
-        print('Det gick inte att läsa från $loadPath.');
-      }
-
-      // fråga om man vill försöka igen
-      tryLoad = acceptOrDecline("Vill du försöka med en annan källfil? (j/n) ", "j", "n");
-    }
-
-  }
-
-  return loadedHeroes;
-}
-
-
-void saveHeroes(List<Map<String, dynamic>> heroes, String? filePath) {
-    // fråga om användaren vill spara hjältarna till fil             
-    bool trySave = acceptOrDecline("\nVill du spara hjältarna till en fil? (j/n) ", "j", "n");
-
-    // om användaren vill spara till fil
-    while (trySave) {
-      
-      // frågar användaren efter en fil att spara hjältarna till, skickar med ett förslag 
-      String? savePath = dialogFilePath(filePath);
-
-      // försöker att spara hjältarna till fil
-      bool trySaveSuccess = trySaveHeroes(heroes, savePath);
-
-      // om det gick bra, försök inte att spara igen
-      if (trySaveSuccess) {
-        trySave = false;  
-      }
-
-      // om det inte gick bra, ge användaren möjlighet att ange annan fil att spara till
-      else {    
-        // 
-        if (savePath != null) {
-          print('Det gick inte att spara till $savePath.');
+        if (exit && heroes.isNotEmpty && _hasPendingChanges(heroes, heroesFilePath)) {
+          // fråga om användaren vill spara hjältarna till fil innan programmet avslutas                    
+          bool trySave = acceptOrDecline("\nInnan du avslutar, vill du spara hjältarna till en fil? (j/n) ", "j", "n");
+          if (trySave) {
+            dialogSaveHeroes(heroes, heroesFilePath);
+          }
         }
 
-        // Fråga om man vill försöka igen
-        trySave = acceptOrDecline("Vill du försöka med en annan målfil? (j/n) ", "j", "n");
-      }
+        isRunning = !exit;
 
+        break;
     }
+  }
+
+  clearScreen();
+  print('Programmet har avslutats.');
 }
+
+
+/// Alternativ i programmets huvudmeny
+enum MainMenuAction {
+  addHero, listHeroes, searchHero, exit
+}
+
+
 
 /// Tar första startargument och undersöker om det finns en fil men det namnet
-String? getFilePathFromArguments(List<String> arguments) {
+String? _getFilePathFromArguments(List<String> arguments) {
   String? filePath;
   if (arguments.isNotEmpty) {  
     String suggestedFilePath = arguments[0];
     try {
-      bool exists = heroes_file_handler.isExistingFilePath(suggestedFilePath);
+      bool exists = file.isExistingFilePath(suggestedFilePath);
       if (exists) {
         print("Filen $suggestedFilePath hittades.");
         filePath = suggestedFilePath;
       }
       else {
         print("Filen $suggestedFilePath hittades inte.");
+        _waitForEnterToContinue();
       }
     }
     catch (e) {
         print('Det uppstod fel när programmet skulle hitta fil $suggestedFilePath: $e');
+        _waitForEnterToContinue();
     }
+
+    
   }
   return filePath;
 }
 
 
-/// Sparar hjältar till fil 
-bool trySaveHeroes(List<Map<String, dynamic>> heroes, String? savePath) {  
-
-  bool success = false;
-  
-  if (savePath != null) {
-    try {
-      print('Sparar hjältar till fil...');
-      success = heroes_file_handler.writeHeroesToFile(savePath, heroes);
-    }
-    catch (e) {
-      print('Fel vid skrivning till fil: $e');
-      success = false;
-    }
-  }  
-  else {
-    print('Ingen fil har angivits.');
-  }
-
-  return success;
+void _waitForEnterToContinue() {
+  waitForEnter('Tryck ENTER för att fortsätta');
 }
 
 
 
-/// Laddar hjältar från fil om en fil är definierad
-(bool, List<Map<String, dynamic>>) tryLoadHeroes(String? loadPath) {
 
-  bool success = false;
+/// Undersöker om det har gjorts några ändringar i hjältelista, jämfört med eventuellt inläst fil
+bool _hasPendingChanges(List<Map<String, dynamic>> heroes, String? filePath) {
 
-  List<Map<String, dynamic>> heroes = [];
+  bool isChanged = true; // kommer att sättas till false om innehållet i heroes är identiskt med innehållet i fil som laddades vid programstart. Om ingen fil laddades ändras inte detta värde.
 
-  // om path finns definierad, försök läsa in hjältar från fil
-  if (loadPath != null) {
-    try {
-      print('Läser in hjältar från fil...');
-      heroes = heroes_file_handler.readHeroesFromFile(loadPath);
-      success = true;
+  // Om ingen fil har angvits, kommer funktionen att returnera true.
+
+  // Undersöker om det gjorts någon förändring jämfört med den fil som laddades vid start
+  if (filePath != null) {
+    List<Map<String, dynamic>> heroesInLoadedFile;
+    {
+      try {
+        heroesInLoadedFile = file.readHeroesFromFile(filePath);
+      }
+      catch (e) {
+        heroesInLoadedFile = [];
+      }
     }
-    catch (e) {
-      print('Fel vid inläsning från fil: $e');      
-    }
-  } 
-  
-  return (success, heroes);
+
+    // Om det är lika många element i båda listorna måste element jämföras med varandra
+    if (heroes.length == heroesInLoadedFile.length)
+    {
+      // Sortera listorna på id
+      heroes.orderHeroesById();
+      heroesInLoadedFile.orderHeroesById();
+
+      isChanged = false; // ändras till true om skillnad hittas
+
+      // Eftersom elementen är sorterade på id, måste hjälte ha samma position i båda listorna om ingen förändring har skett
+      for(int i=0; i < heroes.length && !isChanged; i++) {
+             
+        if (heroes[i].length == heroesInLoadedFile[i].length) {
+        
+          // Jämför json-strängar, kan ev ge falskt 'false' om egenskaper inte kommer i samma ordning
+          String jsonThis = json.encode(heroes[i].length);
+          String jsonOtherHero = json.encode(heroesInLoadedFile[i]);  
+          isChanged = jsonThis != jsonOtherHero;
+        }
+        else {
+          isChanged = true;
+        }
+      }
+    }    
+  }
+
+  return isChanged;
 }

@@ -1,25 +1,33 @@
 import 'dialogs_helper.dart';
 import 'dart:io';
 
-String? dialogFilePath(String? suggestedFile) {
+/// Frågar användaren efter en fil
+/// Om suggestedFile inte är null, kommer användaren först få fråga om den vill använda den filen.
+String? dialogFilePath(String? header, String? suggestedFile) {
 
   String? selectedFile;
 
-  // om det finns en förslagen fil, fråga om användaren vill använda den
+  clearScreen();
+
+  if (header!=null) {
+    print(header);
+  }
+
+  // Om det finns en förslagen fil, fråga om användaren vill använda den
   if (suggestedFile != null) {
-    
+       
     bool useSuggestedFilePath = acceptOrDecline("Vill du använda $suggestedFile? (j/n) ", "j", "n");
    
-    // om förslaget godtogs
+    // Om förslaget godtogs
     if (useSuggestedFilePath) {
       selectedFile = suggestedFile;
     }
   }
 
-  // om det inte finns någon vald fil
+  // Om det inte finns någon vald fil
   if (selectedFile == null) {
     
-    // fråga användaren 
+    // Fråga användaren 
     stdout.write("Ange fil: ");
     String? input = stdin.readLineSync();
 

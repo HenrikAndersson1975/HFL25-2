@@ -1,20 +1,20 @@
 import 'dialogs_helper.dart';
-import 'package:v02/heroes_list_functions.dart';
+import '../extensions.dart';
 
 /// Visar alla hjältar i listan, sorterade efter styrka (starkaste först)
 void dialogListHeroes(List<Map<String, dynamic>> heroes) {
 
   clearScreen();
 
-  print('\nLista över hjältar:');
+  print('--- Lista över hjältar ---');
 
-  // sorterar listan efter hjältarnas styrka, starkaste först
-  orderHeroesByStrength(heroes);
+  // Sorterar listan efter hjältarnas styrka, starkaste först
+  heroes.orderHeroesByStrength();
 
-  // skriver ut alla hjältar i listan
-  printHeroes(heroes);
+  // Skriver ut alla hjältar i listan  
+  heroes.forEach((hero) => hero.display());
    
-  // pausar tills användaren trycker Enter
+  // Pausar tills användaren trycker Enter
   waitForEnter("\nTryck Enter för att återgå till meny.");
 }
 
