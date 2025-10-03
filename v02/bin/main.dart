@@ -173,6 +173,9 @@ bool _hasPendingChanges(List<Map<String, dynamic>> heroes, String filePath) {
     heroes.orderHeroesById();
     heroesInLoadedFile.orderHeroesById();
 
+
+
+
     isChanged = false; // ändras till true om skillnad hittas
 
     // Eftersom elementen är sorterade på id, måste hjälte ha samma position i båda listorna om ingen förändring har skett
@@ -182,7 +185,7 @@ bool _hasPendingChanges(List<Map<String, dynamic>> heroes, String filePath) {
       
         // Slapp kontroll...
         // Jämför json-strängar, kan ev ge falskt 'false' om egenskaper inte kommer i samma ordning
-        String jsonThisHero = json.encode(heroes[i].length);
+        String jsonThisHero = json.encode(heroes[i]);
         String jsonOtherHero = json.encode(heroesInLoadedFile[i]);  
         isChanged = jsonThisHero != jsonOtherHero;
       }
