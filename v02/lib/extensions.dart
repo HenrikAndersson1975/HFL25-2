@@ -1,6 +1,6 @@
 import 'dart:io';
 
-
+/// Extensions för "hjälte-objektlista"
 extension ListMapExtensions on List<Map<String, dynamic>> {
   
   List<Map<String, dynamic>> findHeroesByName(String pattern, bool caseSensitive) {
@@ -33,43 +33,35 @@ extension ListMapExtensions on List<Map<String, dynamic>> {
   }
   
 
-  void addHeroToList(Map<String, dynamic> newHero) {
-    int newHeroId = getNextHeroId();  
-    newHero['id'] = newHeroId.toString();
-    add(newHero);  // Lägg till den nya hjälten i listan
+  void addHeroToList(Map<String, dynamic>? newHero) {
+    if (newHero != null) {
+      int newHeroId = _getNextHeroId();   // ta fram nästa lediga id
+      newHero['id'] = newHeroId.toString();  // tilldela id till hjälte
+      add(newHero);  // Lägg till den nya hjälten i listan
+    }
   }
 
 
-  int getNextHeroId() {
-        
+  int _getNextHeroId() {       
     int maxId = 0;
-
     for (var hero in this) {
       int id = int.tryParse(hero['id'] ?? '0') ?? 0;
       if (id > maxId) {
         maxId = id;
       }
     }
-
-    return maxId + 1; // nästa tillgängliga Id   
+    return maxId + 1; // nästa tillgängliga id   
   }
 }
 
+/// Extensions till "hjälte-objekt"
 extension MapExtensions on Map<String, dynamic> {
 
-  void display() {
+  // Skriv ut hjältens egenskaper till skärm
+  void printHero() {
     Map<String, dynamic> hero = this;
     String name = hero['name'] ?? 'Okänt namn';
     String strength = hero['powerstats']?['strength'] ?? 'Okänd styrka';
     stdout.writeln('Namn: $name, Styrka: $strength');
   }
-
-  
-    
-  
 }
-
-
-
-
-

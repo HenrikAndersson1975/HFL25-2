@@ -1,7 +1,15 @@
 import 'dart:math';
 
 
-Map<String, dynamic> createHero(String name, int strength, String gender, String alignment) {
+Map<String, dynamic>? createHero(String name, int strength, String gender, String alignment) {
+
+  bool isValid = true;
+  isValid = isValid && isValidPropertyValue(name, 'name');
+  isValid = isValid && isValidPropertyValue(strength, 'strength');
+  isValid = isValid && isValidPropertyValue(gender, 'gender');
+  isValid = isValid && isValidPropertyValue(alignment, 'alignment');
+
+  if (!isValid) { return null; }
 
   Map<String, dynamic> hero = {
 
@@ -23,9 +31,42 @@ Map<String, dynamic> createHero(String name, int strength, String gender, String
   return hero;
 }
 
+bool isValidPropertyValue<T>(T value, String propertyKey) {
+
+  if (T == int) {
+    // Kolla om value är i intervall
+    Map<String, dynamic> interval = getValidPropertyValues(propertyKey);
+    dynamic min = getPropertyValue(interval, "min");
+    dynamic max = getPropertyValue(interval, "max"); 
+    bool isValid = (min == null || min <= value) && (max == null || max >= value);
+    return isValid;
+  }
+  else if (T == String) {
+    // Kolla om value är ett av valbara alternativ
+    // Om inga alternativ finns, acceptera svaret
+    List<String>? validValues = getValidPropertyValues(propertyKey);
+    bool isValid = validValues == null || validValues.isEmpty || validValues.contains(value);
+    return isValid;
+  }
+  else {
+    return true;  
+  }
+}
+
+dynamic getValidPropertyValues<T>(String propertyKey) {
+  // Hämta för alla värden
+  Map<String, dynamic> validPropertyValuesEachKey = _getValidPropertyValuesEachKey();
+
+  // Sortera ut för angiven key
+  dynamic validValues = getPropertyValue(validPropertyValuesEachKey, propertyKey);
+
+  return validValues;
+}
+
+
 
 /// Map med giltiga värden för egenskaper hos hjälte
-Map<String, dynamic> getValidProperties() {
+Map<String, dynamic> _getValidPropertyValuesEachKey() {
 
   Map<String, dynamic> validProperties = {
 
@@ -33,7 +74,8 @@ Map<String, dynamic> getValidProperties() {
       "strength": { "min": 0, "max": 100 }
     },
     "apperance": {
-      "gender": ["man", "kvinna", "annat"]
+      "gender": ["man", "kvinna", "annat"],
+      "race": ["människa"],
     },
     "biography": {
       "alignment": ["god", "ond", "neutral"]
@@ -42,6 +84,8 @@ Map<String, dynamic> getValidProperties() {
 
   return validProperties;
 }
+
+
 
 
 /// Hämtar värde för angiven key. 
@@ -70,16 +114,12 @@ dynamic getPropertyValue(Map<String, dynamic> map, String key) {
 
 
 
-
-Map<String, dynamic> createRandomHero() {
+Map<String, dynamic>? createRandomHero() {
   var random = Random();
   
-
-  Map<String, dynamic> validProperties = getValidProperties();
-
   String randomName;
   {      
-    const chars = 'abcdefghijklmnopqrstuvwxyzåäö';   
+    const chars = 'abcdefghijklmnopqrstuvwxyz';   
     int minCharsInName = 3; int maxCharsInName = 7;
     int nameLength = random.nextInt(maxCharsInName - minCharsInName + 1) + minCharsInName; 
     randomName = List.generate(nameLength, (index) => chars[random.nextInt(chars.length)]).join();
@@ -87,25 +127,25 @@ Map<String, dynamic> createRandomHero() {
   }
   int randomStrength;
   {
-    dynamic interval = getPropertyValue(validProperties, "strength");
+    dynamic interval = getValidPropertyValues("strength");
     dynamic min = getPropertyValue(interval, "min");
     dynamic max = getPropertyValue(interval, "max"); 
     randomStrength = min + random.nextInt(max - min + 1);
   }
   String randomGender;
   {
-    List<String> genders = getPropertyValue(validProperties, "gender"); 
+    List<String> genders = getValidPropertyValues("gender"); 
     randomGender = genders[random.nextInt(genders.length)];
   }
   String randomAlignment;
   {
-    List<String> alignments = getPropertyValue(validProperties, "alignment");
+    List<String> alignments = getValidPropertyValues("alignment");
     randomAlignment = alignments[random.nextInt(alignments.length)];
   }
   
   
   // skapa en ny hjälte
-  Map<String, dynamic> newHero = createHero(randomName, randomStrength, randomGender, randomAlignment);
+  Map<String, dynamic>? newHero = createHero(randomName, randomStrength, randomGender, randomAlignment);
 
     
   return newHero;

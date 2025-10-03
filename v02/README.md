@@ -2,7 +2,7 @@
 
 ### START ###
 För att köra programmet från projektmappen v02 skriv: dart run bin/main.dart <filnamn>
-Argumentet <filnamn> behöver inte anges. Filen ska i så fall innehålla lista med hjältar. En sådan fil kan skapas när programmet avslutas. Det ska även finnas en fil som heter testfil.json för att prova funktionen.
+Argumentet <filnamn> behöver inte anges. Filen ska i så fall innehålla lista med hjältar. En sådan fil kan skapas när programmet avslutas.
 
 
 ### OM FILERNA ###
@@ -29,7 +29,7 @@ Alla hjältar visas för användaren.
 Funktion för att visa en meny och ta emot valt alternativ.
 
 # dialogs/dialog_save_heroes.dart
-Interaktion med användaren, frågar om vilken fil som hjältarna ska sparas till.
+Interaktion med användaren, frågar vilken fil som hjältarna ska sparas till.
 
 # dialogs/dialog_search_hero.dart
 Interaktion med användaren, som kan söka hjältar med hjälp av sträng som matchas om hjältars namn.

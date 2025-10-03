@@ -1,4 +1,3 @@
-
 import '../extensions.dart';
 import '../hero.dart';
 import '../file.dart' as file;
@@ -15,50 +14,41 @@ enum InitHeroesAction {
 
 
 /// Presenterar olika alternativ för användaren för att initiera hjältelistan
-List<Map<String, dynamic>> dialogInitHeroes(String? filePath) {
+List<Map<String, dynamic>> dialogInitHeroes() {
 
   List<Map<String, dynamic>> heroes = [];
 
-  // Om en fil har angivits försök att ladda hjältar från filen
-  if (filePath != null) {
-    var (success, loadedHeroes) = _tryLoadHeroes(filePath);
-    if (success && loadedHeroes.isNotEmpty) {
-      heroes = loadedHeroes;  
-    }
+  InitHeroesAction menuChoice;
+  {
+    List<MenuOption<InitHeroesAction>> menuOptions = [
+      MenuOption(InitHeroesAction.loadFromFile, 'Ladda hjältar från en fil'),
+      MenuOption(InitHeroesAction.usePredefinedHeroes, 'Ladda fördefinierade hjältar'),
+      MenuOption(InitHeroesAction.createRandomizedHeroes, 'Skapa hjältar med slumpmässigt skapade egenskaper'),
+      MenuOption(InitHeroesAction.noHeroes, 'Starta utan hjältar')   
+    ];
+    menuChoice = dialogMenu<InitHeroesAction>('--- Initiera listan med hjältar ---', menuOptions, 'Välj ett alternativ: ');
   }
 
-  // Om inga hjältar har laddats, visa en meny för användaren
-  if (heroes.isEmpty) {
-    InitHeroesAction menuChoice;
-    {
-      List<MenuOption<InitHeroesAction>> menuOptions = [
-        MenuOption(InitHeroesAction.loadFromFile, 'Ladda hjältar från en fil'),
-        MenuOption(InitHeroesAction.usePredefinedHeroes, 'Ladda fördefinierade hjältar'),
-        MenuOption(InitHeroesAction.createRandomizedHeroes, 'Skapa hjältar med slumpmässigt skapade egenskaper'),
-        MenuOption(InitHeroesAction.noHeroes, 'Starta utan hjältar')   
-      ];
-      menuChoice = dialogMenu<InitHeroesAction>('--- Initiera listan med hjältar ---', menuOptions, 'Välj ett alternativ: ');
-    }
-
-    // Hantera användarens val i menyn
-    switch (menuChoice) {
-      case InitHeroesAction.loadFromFile:
-        heroes = _loadHeroes();
-        break;
-      case InitHeroesAction.usePredefinedHeroes:
-        heroes = getPredefinedHeroes();   
-        break;
-      case InitHeroesAction.createRandomizedHeroes:   
-        heroes = _getRandomHeroes();    
-        break;
-      case InitHeroesAction.noHeroes:
-        heroes = [];
-        break;
-    }
+  // Hantera användarens val i menyn
+  switch (menuChoice) {
+    case InitHeroesAction.loadFromFile:
+      heroes = _loadHeroes();
+      break;
+    case InitHeroesAction.usePredefinedHeroes:
+      heroes = getPredefinedHeroes();   
+      break;
+    case InitHeroesAction.createRandomizedHeroes:   
+      heroes = _getRandomHeroes();    
+      break;
+    case InitHeroesAction.noHeroes:
+      heroes = [];
+      break;
   }
+  
 
   return heroes;
 }
+
 
 
 
@@ -77,7 +67,7 @@ List<Map<String, dynamic>> _loadHeroes() {
     String? loadPath = dialogFilePath("--- Ladda hjältar från fil ---", null);
 
     // försöker att ladda hjältarna från fil  
-    var (success, loadedHeroes) = _tryLoadHeroes(loadPath);
+    var (success, loadedHeroes) = tryLoadHeroes(loadPath);
 
     // om det gick bra, försök inte att ladda igen
     if (success && loadedHeroes.isNotEmpty) {
@@ -101,7 +91,7 @@ List<Map<String, dynamic>> _loadHeroes() {
 
 
 /// Laddar hjältar från fil om en fil är definierad
-(bool, List<Map<String, dynamic>>) _tryLoadHeroes(String? loadPath) {
+(bool, List<Map<String, dynamic>>) tryLoadHeroes(String? loadPath) {
 
   bool success = false;
 

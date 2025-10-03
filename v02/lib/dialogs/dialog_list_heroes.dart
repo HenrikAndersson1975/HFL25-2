@@ -12,11 +12,12 @@ void dialogListHeroes(List<Map<String, dynamic>> heroes) {
   heroes.orderHeroesByStrength();
 
   // Skriver ut alla hjältar i listan  
-  heroes.forEach((hero) => hero.display());
-   
+  heroes.forEach(printHero);  
+
   // Pausar tills användaren trycker Enter
-  waitForEnter("\nTryck Enter för att återgå till meny.");
+  waitForEnter("\nTryck ENTER för att återgå till meny.");
 }
+
 
 
 

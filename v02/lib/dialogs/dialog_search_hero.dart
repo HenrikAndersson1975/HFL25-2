@@ -35,7 +35,7 @@ void dialogSearchHero(List<Map<String, dynamic>> heroes) {
         print('Ingen hjälte hittades med namnet som innehåller "$partOfHeroName".');
       } else {
         print('Hittade ${matchingHeroes.length} ${matchingHeroes.length == 1 ? 'hjälte' : 'hjältar'} som matchar "$partOfHeroName".');            
-        matchingHeroes.forEach((hero) => hero.display());   // använder forEach eftersom det önskades, men med min lösning verkar det inte rekommenderas
+        matchingHeroes.forEach(printHero);         
       }
     }
 

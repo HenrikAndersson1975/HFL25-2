@@ -1,9 +1,14 @@
 import 'dart:io';
 
+import 'package:v02/extensions.dart';
+
 void clearScreen() {
   print("\x1B[2J\x1B[0;0H");
 }
 
+void printHero(Map<String, dynamic> hero) {
+  hero.printHero();
+} 
 
 /// Ställer fråga till användaren som kan besvaras med ett av två värden.
 bool acceptOrDecline(String prompt, String acceptAnswer, String declineAnswer) {
