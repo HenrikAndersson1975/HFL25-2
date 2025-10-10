@@ -31,3 +31,4 @@ jobs:
       - name: Run tests
         if: steps.extract_folder.outputs.folder_name != ''
         working-directory: ${{ steps.extract_folder.outputs.folder_name }}
+        run: dart test
