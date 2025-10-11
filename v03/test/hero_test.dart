@@ -10,8 +10,8 @@ Future<void> main() async {
     print(hero.toDisplayString());
   }
 
-  print("\nSök efter 'solar':");
-  final results = await manager.findHeroesByName("solar", false);
+  print("\nSök efter 'Ivan':");
+  final results = await manager.findHeroesByName("ivan", false);
   for (var hero in results) {
     print(hero.toDisplayString());
   }
