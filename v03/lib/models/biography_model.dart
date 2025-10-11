@@ -8,24 +8,26 @@ class Biography {
    String? alignment;
 
   Biography({
-    required this.fullName,
-    required this.alterEgos,
-    required this.aliases,
-    required this.placeOfBirth,
-    required this.firstAppearance,
-    required this.publisher,
-    required this.alignment,
+     this.fullName,
+     this.alterEgos,
+     this.aliases,
+     this.placeOfBirth,
+     this.firstAppearance,
+     this.publisher,
+     this.alignment,
   });
 
-  factory Biography.fromJson(Map<String, dynamic> json) {
+  factory Biography.fromJson(Map<String, dynamic>? json) {
     return Biography(
-      fullName: json['full-name'],
-      alterEgos: json['alter-egos'],
-      aliases: List<String>.from(json['aliases']),
-      placeOfBirth: json['place-of-birth'],
-      firstAppearance: json['first-appearance'],
-      publisher: json['publisher'],
-      alignment: json['alignment'],
+      fullName: json?['full-name'],
+      alterEgos: json?['alter-egos'],
+      aliases: (json?['aliases'] is List)
+        ? List<String>.from(json?['aliases'] as List)
+        : null,
+      placeOfBirth: json?['place-of-birth'],
+      firstAppearance: json?['first-appearance'],
+      publisher: json?['publisher'],
+      alignment: json?['alignment'],
     );
   }
 

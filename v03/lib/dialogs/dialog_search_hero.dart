@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:v03/managers/exports_data_managing.dart';
 import 'package:v03/models/exports_hero_models.dart';
-
 import 'dialogs_helper.dart';
-
-
+import 'package:v03/services/hero_manager_service.dart';
+import 'package:v03/interfaces/hero_data_managing.dart';
 
 /// 
 Future<void> dialogSearchHero() async {
@@ -15,7 +13,6 @@ Future<void> dialogSearchHero() async {
   while(isRunning) {
    
     clearScreen();
-
     print('--- Sök hjälte ---');
 
     // Frågar användaren efter namn eller del av namn 
@@ -26,11 +23,8 @@ Future<void> dialogSearchHero() async {
       print('Inget namn angivet.');    
     }
     else {    
-      
-    
-      HeroDataManaging manager = HeroDataManager();
+      HeroDataManaging manager = getHeroManager();
       List<HeroModel> matchingHeroes = await manager.findHeroesByName(partOfHeroName, false);
-
 
       clearScreen();
       print('--- Sök hjälte ---');

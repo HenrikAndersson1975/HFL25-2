@@ -1,5 +1,3 @@
-
-
 class Powerstats {
    int? intelligence;
    int? strength;
@@ -9,22 +7,22 @@ class Powerstats {
    int? combat;
 
   Powerstats({
-    required this.intelligence,
-    required this.strength,
-    required this.speed,
-    required this.durability,
-    required this.power,
-    required this.combat,
+     this.intelligence,
+     this.strength,
+     this.speed,
+     this.durability,
+     this.power,
+     this.combat,
   });
 
-  factory Powerstats.fromJson(Map<String, dynamic> json) {
+  factory Powerstats.fromJson(Map<String, dynamic>? json) {
     return Powerstats(
-      intelligence: _toInt(json['intelligence']),
-      strength: _toInt(json['strength']),
-      speed: _toInt(json['speed']),
-      durability: _toInt(json['durability']),
-      power: _toInt(json['power']),
-      combat: _toInt(json['combat']),
+      intelligence: _toInt(json?['intelligence']),
+      strength: _toInt(json?['strength']),
+      speed: _toInt(json?['speed']),
+      durability: _toInt(json?['durability']),
+      power: _toInt(json?['power']),
+      combat: _toInt(json?['combat']),
     );
   }
   static int? _toInt(dynamic value) {     

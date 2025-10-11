@@ -37,15 +37,13 @@ bool acceptOrDecline(String prompt, String acceptAnswer, String declineAnswer) {
 }
 
 
-
-
-
-
 /// Frågar användaren efter en sträng tills en giltigt värde anges.
-String getStringFromUser(String prompt, List<String>? validValues) { 
-
+String getStringFromUser(String prompt, { List<String>? validValues, int minLength = 0 })
+{
   String? value;
   
+  
+
   // Lista med valbara alternativ, separerade med /   
   String optionsString = "";
   {   
@@ -65,11 +63,16 @@ String getStringFromUser(String prompt, List<String>? validValues) {
 
     // Fråga användaren efter en sträng    
     value = _getValueFromUser(prompt);
-    
+
+
 
     // Kontrollera att inmatningen är giltig
     if (value != null && validValues != null && validValues.isNotEmpty) {    
       if (!validValues.contains(value)) value = null;  // om ogiltig, sätt till null
+    }
+
+    if (value != null && minLength > 0 && value.length < minLength) {
+      value = null;
     }
 
     // Om sträng är null här, var inmatningen ogiltig
@@ -80,7 +83,7 @@ String getStringFromUser(String prompt, List<String>? validValues) {
       {
         errorMessage = 'Ogiltig inmatning';
 
-        if (validValues!=null && validValues.isNotEmpty){
+        if (validValues != null && validValues.isNotEmpty){
           errorMessage += ". Ange ";
           for (int i = 0; i < validValues.length; i++) {
             errorMessage += validValues[i];
@@ -90,6 +93,9 @@ String getStringFromUser(String prompt, List<String>? validValues) {
               errorMessage += ' eller ';
             }
           }
+        }
+        else if (minLength > 0) {
+          errorMessage +=". Ange minst $minLength tecken";
         }
         errorMessage += '.';
       }

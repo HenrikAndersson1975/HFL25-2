@@ -3,14 +3,14 @@ class Work {
    String? base;
 
   Work({
-    required this.occupation,
-    required this.base,
+     this.occupation,
+     this.base,
   });
 
-  factory Work.fromJson(Map<String, dynamic> json) {
+  factory Work.fromJson(Map<String, dynamic>? json) {
     return Work(
-      occupation: json['occupation'],
-      base: json['base'],
+      occupation: json?['occupation'],
+      base: json?['base'],
     );
   }
 

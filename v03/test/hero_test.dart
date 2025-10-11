@@ -1,22 +1,30 @@
-import 'package:test/test.dart';
-  
 
-void main() {
-  
-// provar hur test fungerar
-/*
-  test('testar att 5 är ett ogiltigt kön', () {
-    bool isValid = isValidPropertyValue("5", "gender");
-    expect(isValid, equals(false)); 
-  });
+import 'package:v03/models/exports_hero_models.dart';
+import 'mocks/mock_hero_data_manager.dart';
 
-  test('testar att kvinna är ett giltigt kön', () {
-    bool isValid = isValidPropertyValue('kvinna', "gender");
-    expect(isValid, equals(true)); 
-  });
+Future<void> main() async {
+  final manager = MockHeroDataManager();
 
-  test('testar att 2000 är en ogiltig styrka', () {
-    bool isValid = isValidPropertyValue(2000, "strength");
-    expect(isValid, equals(false)); 
-  });*/
+  print("Alla hjältar:");
+  for (var hero in await manager.getHeroes()) {
+    print(hero.toDisplayString());
+  }
+
+  print("\nSök efter 'solar':");
+  final results = await manager.findHeroesByName("solar", false);
+  for (var hero in results) {
+    print(hero.toDisplayString());
+  }
+
+  print("\nLägg till ny hjälte:");
+  await manager.saveHero(HeroModel(
+    name: "Phantom Blaze",
+    powerstats: Powerstats(intelligence: 70),
+    biography: Biography(fullName: "Finn Phantom"),
+    appearance: Appearance(gender: "man"),
+  ));
+
+  for (var hero in await manager.getHeroes()) {
+    print(hero.toDisplayString());
+  }
 }

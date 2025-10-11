@@ -1,34 +1,34 @@
-import 'package:v03/managers/exports_data_managing.dart';
 import 'dialogs_helper.dart';
 import 'package:v03/models/exports_hero_models.dart';
-
+import 'package:v03/services/hero_manager_service.dart';
+import 'package:v03/interfaces/hero_data_managing.dart';
 
 Future<void> dialogCreateHero() async {
-  HeroModel? newHero = _createHero();        
-  if (newHero != null) {
-    await _saveHero(newHero);
-  }
-}
-
-
-/// Sparar hjälten och skriver ut hjälten
-Future<void> _saveHero(HeroModel hero) async {
-  HeroDataManaging manager = HeroDataManager();  
-
-  try {
-    await manager.saveHero(hero);
+  HeroModel? hero = _createHero();   
     
+  if (hero != null) {
+
     clearScreen();
     print('--- Ny hjälte har skapats ---');
     print(hero.toDisplayString());
     print('');
-    waitForEnter('Tryck ENTER för att fortsätta');
-  }
-  catch (e) {
-    print('Det uppstod problem när hjälte skulle sparas: $e');
+
+    await _saveHero(hero);
   }
 }
 
+/// Sparar hjälten och skriver ut hjälten
+Future<void> _saveHero(HeroModel hero) async {
+
+  HeroDataManaging manager = getHeroManager();
+
+  print('Sparar hjälten till storage.');  
+  bool success = await manager.saveHero(hero);
+  if (success) print('Klart.');
+
+  print('');
+  waitForEnter('Tryck ENTER för att fortsätta');
+}
 
 
 /// Användaren fyller i egenskaper för en hjälte som sedan skapas och returneras.
@@ -38,13 +38,11 @@ HeroModel? _createHero() {
 
   print('--- Skapa hjälte ---');
   print('Ange egenskaper för hjälten.');
-  String name = getStringFromUser('Namn', null);
+  String name = getStringFromUser('Namn', minLength: 2);
   int strength = getIntegerFromUser('Styrka', 0, 100);
-  String gender = getStringFromUser('Kön', ["kvinna","man","annat"]);
-  String alignment = getStringFromUser('Moralisk inriktning', ["god","ond","neutral"]);
+  String gender = getStringFromUser('Kön', validValues:["kvinna","man","annat"]);
+  String alignment = getStringFromUser('Moralisk inriktning', validValues:["god","ond","neutral"]);
 
-// TODOOOOO
-  
 
   Appearance? appearance = Appearance(gender: gender, race: null, height: null, weight: null, eyeColor: null, hairColor: null);  
   Powerstats? powerstats = Powerstats(intelligence: null, strength: strength, speed: null, durability: null, power:null, combat: null);

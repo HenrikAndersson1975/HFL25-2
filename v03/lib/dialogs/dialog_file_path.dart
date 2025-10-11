@@ -3,7 +3,7 @@ import 'dart:io';
 
 /// Frågar användaren efter en fil
 /// Om suggestedFile inte är null, kommer användaren först få fråga om den vill använda den filen.
-String? dialogFilePath(String? header, String? suggestedFile) {
+String? dialogFilePath(String? header, {String? suggestedFile}) {
 
   String? selectedFile;
 

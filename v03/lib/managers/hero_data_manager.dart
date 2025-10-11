@@ -1,6 +1,6 @@
-import 'hero_data_managing.dart';
+import '../interfaces/hero_data_managing.dart';
+import '../interfaces/hero_storage_managing.dart';
 import '../models/hero_model.dart';
-import 'hero_storage_managing.dart';
 
 class HeroDataManager implements HeroDataManaging
 {
@@ -11,7 +11,6 @@ class HeroDataManager implements HeroDataManaging
   HeroDataManager._privateConstructor();
 
   HeroStorageManaging? _storage; // kommer sättas via factory
-
 
   // Factory-konstruktor som alltid returnerar samma instans
   factory HeroDataManager({HeroStorageManaging? storage}) {   
@@ -38,13 +37,22 @@ class HeroDataManager implements HeroDataManaging
   }
 
 
-  /// Sparar en hjälte till listan och sparar sedan hela listan till storage.
+  /// Sparar en hjälte till listan och sparar sedan till storage.
   @override
   Future<bool> saveHero(HeroModel hero) async {
     try {
       hero.id = _getNextHeroId();
       _heroList.add(hero);
-      await _storage?.save(_heroList);
+
+      SaveType? saveType = _storage?.getSaveType();
+
+      if (saveType == SaveType.addNewItem) {
+        await _storage?.addNewItem(hero);  // om storage endast vill ha nytt element
+      }
+      else if (saveType == SaveType.replaceItemCollection) {
+        await _storage?.replaceItemCollection(_heroList);  // om storage byter ut hela listan
+      }
+
       return true;
     } catch (e) {
       print('Fel vid sparande av hjälte: $e');
@@ -68,8 +76,6 @@ class HeroDataManager implements HeroDataManaging
       return name.contains(searchPattern);  // Kollar om söksträngen finns i namnet
     }).toList();
   }
-  
-
   
 
   @override

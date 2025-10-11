@@ -3,14 +3,14 @@ class Connections {
    String? relatives;
 
   Connections({
-    required this.groupAffiliation,
-    required this.relatives,
+     this.groupAffiliation,
+     this.relatives,
   });
 
-  factory Connections.fromJson(Map<String, dynamic> json) {
+  factory Connections.fromJson(Map<String, dynamic>? json) {
     return Connections(
-      groupAffiliation: json['group-affiliation'],
-      relatives: json['relatives'],
+      groupAffiliation: json?['group-affiliation'],
+      relatives: json?['relatives'],
     );
   }
 

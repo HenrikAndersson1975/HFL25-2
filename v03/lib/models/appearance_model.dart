@@ -7,22 +7,26 @@ class Appearance {
    String? hairColor;
 
   Appearance({
-    required this.gender,
-    required this.race,
-    required this.height,
-    required this.weight,
-    required this.eyeColor,
-    required this.hairColor,
+     this.gender,
+     this.race,
+     this.height,
+     this.weight,
+     this.eyeColor,
+     this.hairColor,
   });
 
-  factory Appearance.fromJson(Map<String, dynamic> json) {
+  factory Appearance.fromJson(Map<String, dynamic>? json) {
     return Appearance(
-      gender: json['gender'],
-      race: json['race'],
-      height: List<String>.from(json['height']),
-      weight: List<String>.from(json['weight']),
-      eyeColor: json['eye-color'],
-      hairColor: json['hair-color'],
+      gender: json?['gender'],
+      race: json?['race'],
+      height: (json?['height'] is List)
+          ? List<String>.from(json?['height'] as List)
+          : null,
+      weight: (json?['weight'] is List)
+          ? List<String>.from(json?['weight'] as List)
+          : null,
+      eyeColor: json?['eye-color'],
+      hairColor: json?['hair-color'],
     );
   }
 
@@ -36,10 +40,4 @@ class Appearance {
       'hair-color': hairColor,
     };
   }
-
-
-  
-  
-
-
 }
