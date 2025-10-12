@@ -31,13 +31,13 @@ Future<void> dialogSearchHero() async {
 
       // Visar resultatet av sökningen
       if (matchingHeroes.isEmpty) {
-        print('Ingen hjälte hittades med namnet som innehåller "$partOfHeroName".');
+        print('Ingen hjälte hittades med namn som innehåller "$partOfHeroName".');
       } else {
-        print('Hittade ${matchingHeroes.length} ${matchingHeroes.length == 1 ? 'hjälte' : 'hjältar'} som matchar "$partOfHeroName".');            
-        matchingHeroes.forEach((hero) {
-          String? s = hero.toDisplayString();
+        print('Hittade ${matchingHeroes.length} ${matchingHeroes.length == 1 ? 'hjälte' : 'hjältar'} som matchar "$partOfHeroName".');   
+        for (int i=0; i<matchingHeroes.length; i++) {        
+          String? s = matchingHeroes[i].toDisplayString();
           print(s);
-        });    
+        }   
       }
     }
 

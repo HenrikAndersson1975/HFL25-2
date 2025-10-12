@@ -1,3 +1,4 @@
+
 class Powerstats {
    int? intelligence;
    int? strength;

@@ -1,4 +1,5 @@
 
+
 import 'appearance_model.dart';
 import 'biography_model.dart';
 import 'connections_model.dart';
@@ -31,19 +32,6 @@ class HeroModel {
   });
 
   factory HeroModel.fromJson(Map<String, dynamic> json) {
-
-      // TESTAR
-      /*try {var response= json['response']; } catch (e) { print('response');print(e);}
-      try {var id= _toInt(json['id']); } catch (e) { print('id');print(e);}
-      try {var name= json['name']; } catch (e) { print('name');print(e);}
-      try {var powerstats= Powerstats.fromJson(json['powerstats']); } catch (e) { print('powerstats');print(e);}
-      try {var biography= Biography.fromJson(json['biography']); } catch (e) { print('biography');print(e);}
-      try {var appearance= Appearance.fromJson(json['appearance']); } catch (e) { print('appearance');print(e);}
-      try {var  work= Work.fromJson(json['work']); } catch (e) { print('work');print(e);}
-      try {var connections= Connections.fromJson(json['connections']); } catch (e) { print('connections');print(e);}
-      try {var image=Image.fromJson(json['image']); } catch (e) { print('image');print(e);}
-      */
-     
 
     return HeroModel(
       response: json['response'],

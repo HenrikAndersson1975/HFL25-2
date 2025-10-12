@@ -21,7 +21,7 @@ class HeroFileManager implements HeroStorageManaging
 
   @override
   SaveType getSaveType() {
-   return SaveType.replaceItemCollection;
+   return SaveType.replaceItemCollection; // visar att detta storage inte kan ta emot ett element, utan vill ersätta hela listan
   }
 
   @override
