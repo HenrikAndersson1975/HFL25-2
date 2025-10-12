@@ -9,6 +9,7 @@ Future<void> dialogInit() async {
 
   HeroDataManaging manager = getHeroManager();
   
+
   // Ladda hjältar från storage till hjältelistan 
   print('Läser in hjältar...');
   bool success = await manager.loadHeroes();

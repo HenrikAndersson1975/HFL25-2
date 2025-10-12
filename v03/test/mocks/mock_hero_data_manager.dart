@@ -56,6 +56,8 @@ class MockHeroDataManager implements HeroDataManaging {
     return true;
   }
 
+  
+
   /// Spara hjälte (lägg till i listan)
   @override
   Future<bool> saveHero(HeroModel hero) async {

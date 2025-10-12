@@ -1,13 +1,13 @@
-# v03
+# v03 #
 
-# START #
-För att köra programmet från projektmappen v03 skriv: dart run bin/main.dart.
-Man kan ange argument:
--t = för att starta med fördefinierad hjältelista.
--f = för att ange ett filnamn, när programmet har startat, till fil som innehåller hjältelista 
--f filnamn = fil som innehåller hjältelista
+## START ##
+För att köra programmet från projektmappen v03 skriv: dart run bin/main.dart.  
+Man kan ange argument:  
+-t = för att starta med fördefinierad hjältelista, använder mock som manager.  
+-f = för att ange ett filnamn när programmet har startat som ska användas för att läsa/skriva hjältelista  
+-f filnamn = fil som innehåller hjältelista  
 
-# OM FILERNA #
+## OM FILERNA ##  
 
 ### bin/main.dart ###
 Filen innehåller programmet entry-point och huvudloop.
@@ -26,5 +26,3 @@ Klasser för att hantera hjälte och egenskaper hos hjälte.
 
 ### services ###
 För att ge programmet åtkomst till manager.
-
-

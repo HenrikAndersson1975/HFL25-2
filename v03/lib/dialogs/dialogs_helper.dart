@@ -42,8 +42,6 @@ String getStringFromUser(String prompt, { List<String>? validValues, int minLeng
 {
   String? value;
   
-  
-
   // Lista med valbara alternativ, separerade med /   
   String optionsString = "";
   {   
@@ -63,8 +61,6 @@ String getStringFromUser(String prompt, { List<String>? validValues, int minLeng
 
     // Fråga användaren efter en sträng    
     value = _getValueFromUser(prompt);
-
-
 
     // Kontrollera att inmatningen är giltig
     if (value != null && validValues != null && validValues.isNotEmpty) {    

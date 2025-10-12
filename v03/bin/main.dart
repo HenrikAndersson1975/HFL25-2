@@ -3,46 +3,32 @@ import 'package:v03/interfaces/hero_data_managing.dart';
 import 'package:v03/managers/hero_data_manager.dart';
 import 'package:v03/interfaces/hero_storage_managing.dart';
 import 'package:v03/managers/hero_file_manager.dart';
+//import 'package:v03/managers/hero_database_manager.dart';
 import '../test/mocks/mock_hero_data_manager.dart';
 import 'package:get_it/get_it.dart';
-
 
 void main(List<String> arguments) async {
   
   clearScreen();  
 
-  final getIt = GetIt.instance;
-
   // analysera startargument
-  var (runMode, filePath) = _handleArguments(arguments);
+  var (storageType, filePath) = _handleArguments(arguments);
+  // -t 
+  // -f   
+  // -f filnamn 
+  // -d    (objectbox) - inte implementerat
 
- // initiera datahantering
- {  
-    switch (runMode) {
+  _registerManagers(storageType, filePath);
 
-      // om man vill starta i testläge
-      case RunMode.test:   
-        print('Programmet startar i testläge. En testlista med hjältar kommer att laddas.');
-        getIt.registerLazySingleton<HeroDataManaging>(() => MockHeroDataManager());        
-        break;
-      
-      // om man vill starta med att ladda en fil, eller om man inte har angivit giltigt startargument
-      case RunMode.file:
-      default:
-        if (runMode == RunMode.file) {
-          filePath ??= dialogFilePath('Du har angivit att du vill starta programmet med att läsa in hjältar från en fil.');     
-        }    
-        filePath ??= 'heroes.json';  // programmet använder heroes.json om ingen fil har angivits            
-        HeroStorageManaging storage = HeroFileManager(filePath); // skapar storage, i detta fall filhantering   
-        getIt.registerLazySingleton<HeroDataManaging>(() => HeroDataManager(storage: storage));  // registrerar hanterare för hjältelista    
-    }
+  // visa startmeddelande om hjältar ska laddas
+  if (storageType != StorageType.none)
+  {
+    // Visa startmeddelande
+    await dialogInit();
   }
 
-  // Visa startmeddelande
-  await dialogInit();
-
   // Gå till menyloopen
-  await runMainMenu();
+  await _runMainMenu();
 
   clearScreen();
   print('Programmet har avslutats.');
@@ -55,7 +41,7 @@ enum MainMenuAction {
 }
 
 /// Menyloopen
-Future<void> runMainMenu() async {
+Future<void> _runMainMenu() async {
   bool isRunning = true;
 
   while (isRunning) {
@@ -91,32 +77,73 @@ Future<void> runMainMenu() async {
   }
 }
 
-enum RunMode {
-  test, file, other
+enum StorageType {
+  test, file, database, none
 }
 
 
-(RunMode,String?) _handleArguments(List<String> arguments) {
+
+void _registerManagers(StorageType storageType, String? filePath) {
+
+  final getIt = GetIt.instance;
+
+    switch (storageType) {
+
+      // om man vill starta i testläge
+      case StorageType.test:   
+        print('Programmet startar i testläge. En testlista med hjältar kommer att laddas.'); 
+        waitForEnter('Tryck ENTER för att starta.');     
+        getIt.registerSingleton<HeroDataManaging>(MockHeroDataManager());        
+        break;
+      
+      // om man vill använda fil för att läsa och skriva hjältar till
+      case StorageType.file:
+        filePath = dialogFilePath('Du har angivit att du vill att programmet ska använda en fil för att läsa från och skriva till.', suggestedFile: filePath);   
+        HeroStorageManaging storage = HeroFileManager(filePath ?? 'heroes.json');    
+        getIt.registerSingleton<HeroDataManaging>(HeroDataManager(storage: storage));  
+        break;
+
+      // om man vill använda databas
+      case StorageType.database:      
+        //HeroStorageManaging storage = HeroDatabaseManager();
+        //getIt.registerSingleton<HeroDataManaging>(HeroDataManager(storage: storage));  
+        throw Exception('Du vill använda en databas. Vi lugnar oss lite med det... Det är inte implementerat.'); 
+        
+      default:  
+        print('Du har valt att köra programmet utan lagring. Inga hjältar finns när programmet startar och inga hjältar kommer att sparas till annan körning.');
+        waitForEnter('Tryck ENTER för att starta.');
+        getIt.registerSingleton<HeroDataManaging>(HeroDataManager(storage: null)); 
+        break;     
+    }
   
-  RunMode runMode = RunMode.other;
+}
+
+
+(StorageType,String?) _handleArguments(List<String> arguments) {
+  
+  StorageType type = StorageType.none;
   String? filePath;
 
   if (arguments.isNotEmpty) {   
     
-    String flag = arguments[0]; // första argumentet ska vara -t eller -f
+    String flag = arguments[0]; // första argumentet ska vara -t, -f eller -d
 
     if (flag == '-t') {
-      runMode = RunMode.test;
+      type = StorageType.test;
     } 
     else if (flag == '-f') {  
-      runMode = RunMode.file;
+      type = StorageType.file;
       if (arguments.length > 1) {  // andra argumentet ska vara ett filnamn
         filePath = arguments[1];
       }
-    } else {
+    } 
+    else if (flag == "-d") {
+      type = StorageType.database;
+    }
+    else {
       print('Okänt argument: $flag');
     }
   }
 
-  return (runMode, filePath);
+  return (type, filePath);
 }

@@ -37,6 +37,10 @@ class HeroDataManager implements HeroDataManaging
   }
 
 
+  bool _usesStorage() {
+    return _storage != null;
+  }
+
   /// Sparar en hjälte till listan och sparar sedan till storage.
   @override
   Future<bool> saveHero(HeroModel hero) async {
@@ -44,15 +48,15 @@ class HeroDataManager implements HeroDataManaging
       hero.id = _getNextHeroId();
       _heroList.add(hero);
 
-      SaveType? saveType = _storage?.getSaveType();
-
-      if (saveType == SaveType.addNewItem) {
-        await _storage?.addNewItem(hero);  // om storage endast vill ha nytt element
+      if (_usesStorage()) {
+        SaveType? saveType = _storage?.getSaveType();
+        if (saveType == SaveType.addNewItem) {
+          await _storage?.addNewItem(hero);  // om storage endast vill ha nytt element
+        }
+        else if (saveType == SaveType.replaceItemCollection) {
+          await _storage?.replaceItemCollection(_heroList);  // om storage byter ut hela listan
+        }
       }
-      else if (saveType == SaveType.replaceItemCollection) {
-        await _storage?.replaceItemCollection(_heroList);  // om storage byter ut hela listan
-      }
-
       return true;
     } catch (e) {
       print('Fel vid sparande av hjälte: $e');

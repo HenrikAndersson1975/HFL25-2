@@ -14,13 +14,18 @@ String? dialogFilePath(String? header, {String? suggestedFile}) {
   }
 
   // Om det finns en förslagen fil, fråga om användaren vill använda den
-  if (suggestedFile != null) {
+  if (suggestedFile != null && suggestedFile.isNotEmpty) {
        
-    bool useSuggestedFilePath = acceptOrDecline("Vill du använda $suggestedFile? (j/n) ", "j", "n");
-   
-    // Om förslaget godtogs
-    if (useSuggestedFilePath) {
-      selectedFile = suggestedFile;
+    if (_isValidFileName(suggestedFile)) {
+
+      bool useSuggestedFilePath = acceptOrDecline("Vill du använda $suggestedFile? (j/n) ", "j", "n");
+      
+      if (useSuggestedFilePath) {
+        selectedFile = suggestedFile;
+      }
+    }
+    else {
+      print('Föreslaget filnamn, $suggestedFile, är ogiltigt. Du måste ange annat namn.');
     }
   }
 
@@ -30,13 +35,20 @@ String? dialogFilePath(String? header, {String? suggestedFile}) {
     // Fråga användaren 
     stdout.write("Ange fil: ");
     String? input = stdin.readLineSync();
-
-    if (input != null) {
-      input = input.trim();   
+    input?.trim(); 
+    
+    if (_isValidFileName(input)) {
+      selectedFile = input;
     }
-
-    selectedFile = input;
+    else {
+      print('Ogiltigt filnamn.');
+    }
   }
 
   return selectedFile;
+}
+
+bool _isValidFileName(String? fileName) {
+  // mycket slappt
+  return fileName!=null && fileName.length>3 && fileName.contains(('.'));
 }
