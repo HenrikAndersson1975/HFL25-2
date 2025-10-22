@@ -4,8 +4,9 @@ import '../interfaces/hero_data_managing.dart';
 HeroDataManaging getHeroManager() {
   final getIt = GetIt.instance;
 
-  // Hämta HeroDataManaging från get_it
+  // Hämta objekt som implementerar HeroDataManaging från get_it
   HeroDataManaging manager = getIt<HeroDataManaging>();
   
   return manager;
 }
+

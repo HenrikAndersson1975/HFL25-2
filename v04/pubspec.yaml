@@ -10,6 +10,8 @@ environment:
 dependencies:
   path: ^1.9.0
   get_it: ^8.2.0
+  http: ^1.5.0
+  dotenv: ^4.2.0
   
 dev_dependencies:
   lints: ^6.0.0

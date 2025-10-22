@@ -8,8 +8,8 @@ import 'powerstats_model.dart';
 import 'work_model.dart';
 
 class HeroModel {
-  // tillåter null på allt utom response
-  String response;
+  
+  String? response;
   int? id;
   String? name;
   Powerstats? powerstats;

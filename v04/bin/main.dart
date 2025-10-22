@@ -7,8 +7,21 @@ import 'package:v03/managers/hero_file_manager.dart';
 import '../test/mocks/mock_hero_data_manager.dart';
 import 'package:get_it/get_it.dart';
 
+import 'package:v03/dialogs/dialog_search_heroTESTHTTP.dart'; // TEMP
+
 void main(List<String> arguments) async {
   
+// todo
+// ska lägga till att man kan söka hjälte via api
+
+// inga dubletter
+// hantera id!!!
+// resutat kan sparas till lokal lista
+// man ska kunna ta bort hjälte från lokal lista
+// ... se till att inte read/write kan göras samtidigt
+// ska kunna lista god och onda jhjältar var för sig
+
+
   clearScreen();  
 
   // analysera startargument
@@ -16,7 +29,6 @@ void main(List<String> arguments) async {
   // -t 
   // -f   
   // -f filnamn 
-  // -d    (objectbox) - inte implementerat
 
   _registerManagers(storageType, filePath);
 
@@ -37,7 +49,7 @@ void main(List<String> arguments) async {
 
 /// Alternativ i programmets huvudmeny
 enum MainMenuAction {
-  addHero, listHeroes, searchHero, exit
+  addHero, listHeroes, searchHero, exit, testhttp
 }
 
 /// Menyloopen
@@ -48,15 +60,21 @@ Future<void> _runMainMenu() async {
     MainMenuAction menuChoice = dialogMenu<MainMenuAction>(
       '=== MENY ===',
       [
-        MenuOption(MainMenuAction.addHero, 'Lägg till hjälte'),
-        MenuOption(MainMenuAction.listHeroes, 'Visa hjältar'),
-        MenuOption(MainMenuAction.searchHero, 'Sök hjälte'),
+        MenuOption(MainMenuAction.testhttp, 'Sök hjälte ... test http'),
+        MenuOption(MainMenuAction.addHero, 'Skapa hjälte och spara i lokal lista'),
+        MenuOption(MainMenuAction.listHeroes, 'Visa hjältar i lokal lista'),
+        MenuOption(MainMenuAction.searchHero, 'xxxxSök hjälte i lokal lista'),
         MenuOption(MainMenuAction.exit, 'Avsluta'),
       ],
       'Välj ett alternativ: ',
     );
 
     switch (menuChoice) {
+
+      case MainMenuAction.testhttp: 
+        await dialogSearchHeroTESTHTTP();
+        break;
+
       case MainMenuAction.addHero:
         await dialogCreateHero();
         break;
@@ -78,7 +96,7 @@ Future<void> _runMainMenu() async {
 }
 
 enum StorageType {
-  test, file, database, none
+  test, file, none
 }
 
 
@@ -102,20 +120,13 @@ void _registerManagers(StorageType storageType, String? filePath) {
         HeroStorageManaging storage = HeroFileManager(filePath ?? 'heroes.json');    
         getIt.registerSingleton<HeroDataManaging>(HeroDataManager(storage: storage));  
         break;
-
-      // om man vill använda databas
-      case StorageType.database:      
-        //HeroStorageManaging storage = HeroDatabaseManager();
-        //getIt.registerSingleton<HeroDataManaging>(HeroDataManager(storage: storage));  
-        throw Exception('Du vill använda en databas. Vi lugnar oss lite med det... Det är inte implementerat.'); 
-        
+   
       default:  
         print('Du har valt att köra programmet utan lagring. Inga hjältar finns när programmet startar och inga hjältar kommer att sparas till annan körning.');
         waitForEnter('Tryck ENTER för att starta.');
         getIt.registerSingleton<HeroDataManaging>(HeroDataManager(storage: null)); 
         break;     
-    }
-  
+    } 
 }
 
 
@@ -137,9 +148,6 @@ void _registerManagers(StorageType storageType, String? filePath) {
         filePath = arguments[1];
       }
     } 
-    else if (flag == "-d") {
-      type = StorageType.database;
-    }
     else {
       print('Okänt argument: $flag');
     }
