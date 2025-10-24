@@ -1,0 +1,98 @@
+
+
+import 'appearance_model.dart';
+import 'biography_model.dart';
+import 'connections_model.dart';
+import 'image_model.dart';
+import 'powerstats_model.dart';
+import 'work_model.dart';
+
+class HeroModel {
+  
+  String? response;
+  String? id;
+  String? name;
+  Powerstats? powerstats;
+  Biography? biography;
+  Appearance? appearance;
+  Work? work;
+  Connections? connections;
+  Image? image;
+
+  HeroModel({
+     this.response = 'success',   
+     this.id,
+     this.name,
+     this.powerstats,
+     this.biography,
+     this.appearance,
+     this.work,
+     this.connections,
+     this.image,
+  });
+
+  factory HeroModel.fromJson(Map<String, dynamic> json) {
+
+    return HeroModel(
+      response: json['response'],
+      id: json['id'],
+      name: json['name'],
+      powerstats: Powerstats.fromJson(json['powerstats']),
+      biography: Biography.fromJson(json['biography']),
+      appearance: Appearance.fromJson(json['appearance']),
+      work: Work.fromJson(json['work']),
+      connections: Connections.fromJson(json['connections']),
+      image: Image.fromJson(json['image']),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'response': response,
+      'id': id,
+      'name': name,
+      'powerstats': powerstats?.toJson(),
+      'biography': biography?.toJson(),
+      'appearance': appearance?.toJson(),
+      'work': work?.toJson(),
+      'connections': connections?.toJson(),
+      'image': image?.toJson(),
+    };
+  }
+
+
+  String? toDisplayString({int? number}) {
+
+    String? s = "";
+    
+    String name = this.name ?? 'okänt namn';
+    String gender = appearance?.gender ?? 'okänt';
+    String strength = powerstats?.strength.toString() ?? 'okänd styrka';
+    String alignment = biography?.alignment ?? 'okänt';
+
+    
+    gender = _translate(gender, {
+      'Female': 'kvinna',
+      'Male': 'man',
+      'Other': 'annat'
+    });
+
+    alignment = _translate(alignment, {
+      'good': 'god',
+      'bad': 'ond',
+      'neutral': 'neutral'
+    });
+
+    if (number != null) { s+='$number. ';}
+    s+= 'Namn: $name, Kön: $gender, Styrka: $strength, Moralisk inriktning: $alignment';
+    return s;
+  }
+
+  String _translate(String word, Map<String,String> dictionary) {
+    if (dictionary.containsKey(word)) {
+      return dictionary[word]!;
+    } else {
+      return word;
+    }
+  }
+}
