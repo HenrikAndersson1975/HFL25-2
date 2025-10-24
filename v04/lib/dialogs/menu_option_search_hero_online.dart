@@ -1,8 +1,9 @@
 
 import 'dart:io';
 
-import 'package:v04/dialogs/dialog_enter_hero_name.dart';
-import 'package:v04/dialogs/dialog_menu.dart';
+import 'dialog_enter_hero_name.dart';
+import 'dialog_menu.dart';
+import 'dialog_select_hero.dart';
 import 'package:v04/interfaces/hero_data_managing.dart';
 import 'package:v04/managers/hero_network_manager.dart';
 import 'package:v04/models/exports_hero_models.dart';
@@ -47,10 +48,12 @@ Future<void> menuOptionSearchHeroOnline() async {
 
         switch (menuChoice) {
           case 1: 
+            clearScreen();
             await _saveHeroes(matchingHeroes);
             break;
           case 2: 
-            _saveSelectedHeroes(matchingHeroes);
+            clearScreen();
+            await _saveSelectedHeroes(matchingHeroes);
             break;
           case 3: 
 
@@ -69,9 +72,7 @@ Future<void> menuOptionSearchHeroOnline() async {
 
 
 Future<void> _saveHeroes(List<HeroModel> heroes) async {
-
-  clearScreen();
-
+  
   HeroDataManaging manager = getHeroDataManager();
 
   for (int i=0; i < heroes.length; i++) {
@@ -89,16 +90,41 @@ Future<void> _saveHeroes(List<HeroModel> heroes) async {
 
   print('');  
 }
-void _saveSelectedHeroes(List<HeroModel> heroes) {
-  print('.... detta ska implementeras... ska välja vilka som ska sparas');
+
+
+Future<void> _saveSelectedHeroes(List<HeroModel> heroes) async {
+  
+  List<HeroModel> unselectedHeroes = [];
+  unselectedHeroes.addAll(heroes);
+
+  bool exit = false;
+
+  while (!exit) {
+    HeroModel? selectedHero = dialogSelectHero('\nAnge vilken hjälte som ska sparas?', unselectedHeroes, 'Välj ett alternativ: ');
+ 
+    if (selectedHero == null) {
+      exit = true;   
+    }
+    else {
+      unselectedHeroes.remove(selectedHero);   
+      await _saveHeroes([ selectedHero ]);
+
+      print('');
+    }
+  }
+
+  //return;
 }
+
+
+
 
 
 Future<List<HeroModel>> _getSearchResult(String partOfHeroName) async {
 
     HeroNetworkManager manager = getHeroNetworkManager();
 
-    print('Hämtar hjältar från server...');
+    print('\nHämtar hjältar från server...');
     var (success, matchingHeroes) = await manager.findHeroesByName(partOfHeroName);
 
     return matchingHeroes;
