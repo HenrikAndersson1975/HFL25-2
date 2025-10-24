@@ -9,15 +9,11 @@ Future<void> dialogInit() async {
 
   HeroDataManaging manager = getHeroDataManager();
   
-  
-
   // Ladda hjältar från storage till hjältelistan 
   print('Läser in hjältar...');
- // bool success = await manager.loadHeroes();
- // if (success) { print('Klart.'); }
-  print('');
-
   List<HeroModel> heroes = await manager.getHeroes();
+  print('Klart.');
+  print('');
   
   // Skriv ut antal hjältar som har laddats
   print('Programmet startar med ${heroes.length} ${heroes.length == 1 ? 'hjälte' : 'hjältar'}.');

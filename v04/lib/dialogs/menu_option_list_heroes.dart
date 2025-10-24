@@ -4,7 +4,7 @@ import 'package:v04/services/singletons_service.dart';
 import 'package:v04/interfaces/hero_data_managing.dart';
 
 /// Visar alla hjältar i listan, sorterade efter styrka (starkaste först)
-Future<void> dialogListHeroes() async {
+Future<void> menuOptionListHeroes() async {
 
   clearScreen();
 
@@ -31,8 +31,3 @@ Future<void> dialogListHeroes() async {
   // Pausar tills användaren trycker Enter
   waitForEnter("\nTryck ENTER för att återgå till meny.");
 }
-
-
-
-
- 

@@ -72,4 +72,8 @@ class FileService {
 
     return result;
   }
+
+  Future<bool> exists() async {
+    return _file?.exists() ?? false;
+  }
 }

@@ -23,11 +23,12 @@ class HeroDataManager implements HeroDataManaging
 
   final List<HeroModel> _heroList = [];
 
+  
   @override
   Future<bool> addHero(HeroModel hero) async {
     try {
 
-      // Om id är null, har användare skapat ny hero. Tilldela ett unikt id.
+      // Om id är null, har användare skapat ny hjälte. Tilldela ett unikt id.
       hero.id ??= getUniqueId();
       
       // Hämta lista
@@ -91,7 +92,7 @@ class HeroDataManager implements HeroDataManaging
   Future<List<HeroModel>> getHeroes() async {
 
     // Om lista är tom, kan det bero på att den inte har synkats mot storage
-    if (_heroList.isEmpty) {
+    if (_heroList.isEmpty) {  
       List<HeroModel> list = await _storage?.getHeroes() ?? [];
       if (list.isNotEmpty) {
         _heroList.addAll(list);

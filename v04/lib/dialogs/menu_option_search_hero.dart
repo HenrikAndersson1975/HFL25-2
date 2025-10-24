@@ -6,7 +6,7 @@ import 'package:v04/services/singletons_service.dart';
 import 'package:v04/interfaces/hero_data_managing.dart';
 
 /// 
-Future<void> dialogSearchHero() async {
+Future<void> menuOptionSearchHero() async {
 
   bool isRunning = true;
 

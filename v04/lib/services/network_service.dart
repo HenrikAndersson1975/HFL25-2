@@ -15,7 +15,7 @@ class NetworkService {
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
-      return response.body;  //return response.body; // jsondecode()  för att få Map<string,dynamic>
+      return response.body;  
     } else {
       throw Exception('Kunde inte ladda data');
     }

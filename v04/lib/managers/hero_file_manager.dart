@@ -89,9 +89,18 @@ class HeroFileManager implements HeroStorageManaging {
   // Funktion för att läsa hjältelista från fil
   Future<List<HeroModel>> _readHeroList() async {
     try {
-      String jsonString = await _fileService.read();  
-      List<dynamic> jsonList = jsonDecode(jsonString);  
-      List<HeroModel> heroes = jsonList.map((json) => HeroModel.fromJson(json)).toList();
+      List<HeroModel> heroes = [];
+
+      // Kontrollerar om fil är skapad.
+      // Ska inte ge fel om filen inte finns ännu.
+      bool fileExists = await _fileService.exists();
+
+      if (fileExists)
+      {
+        String jsonString = await _fileService.read();  
+        List<dynamic> jsonList = jsonDecode(jsonString);  
+        heroes = jsonList.map((json) => HeroModel.fromJson(json)).toList();
+      }
       return heroes;
     } catch (e) {
       print('Fel vid läsning av hjälte lista: $e');

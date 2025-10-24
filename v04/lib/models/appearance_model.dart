@@ -41,4 +41,6 @@ class Appearance {
       'hair-color': hairColor,
     };
   }
+
+  
 }

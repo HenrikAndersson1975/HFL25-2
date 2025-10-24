@@ -1,6 +1,7 @@
 
 
 import 'package:v04/dialogs/exports_dialogs.dart'; 
+import 'package:v04/dialogs/exports_menu_options.dart';
 import 'package:v04/managers/hero_data_manager.dart';
 import 'package:v04/managers/hero_file_manager.dart';
 import 'package:v04/services/singletons_service.dart';
@@ -15,16 +16,11 @@ import 'package:v04/interfaces/hero_storage_managing.dart';
 void main(List<String> arguments) async {
   
 
-
-
 // todo
 // ska lägga till att man kan söka hjälte via api
 
-// inga dubletter
-// hantera id!!!
 // resutat kan sparas till lokal lista
 // man ska kunna ta bort hjälte från lokal lista
-// ... se till att inte read/write kan göras samtidigt
 // ska kunna lista god och onda jhjältar var för sig
 
 
@@ -41,7 +37,6 @@ void main(List<String> arguments) async {
   // visa startmeddelande om hjältar ska laddas
   if (storageType != StorageType.none)
   {
-    // Visa startmeddelande
     await dialogInit();
   }
 
@@ -82,19 +77,19 @@ Future<void> _runMainMenu() async {
         break;
 
       case MainMenuAction.addHero:
-        await dialogCreateHero();
+        await menuOptionCreateHero();
         break;
 
       case MainMenuAction.listHeroes:
-        await dialogListHeroes();
+        await menuOptionListHeroes();
         break;
 
       case MainMenuAction.searchHero:
-        await dialogSearchHero();
+        await menuOptionSearchHero();
         break;
 
       case MainMenuAction.exit:
-        bool exit = dialogExit();
+        bool exit = menuOptionExit();
         isRunning = !exit;
         break;
     }
@@ -123,13 +118,16 @@ void _registerManagers(StorageType storageType, String? filePath) {
       
       // om man vill använda fil för att läsa och skriva hjältar till
       case StorageType.file:
-        filePath = dialogFilePath('Du har angivit att du vill att programmet ska använda en fil för att läsa från och skriva till.', suggestedFile: filePath);       
-        HeroStorageManaging storage = HeroFileManager(filePath ?? 'heroes.json');
+        filePath = dialogFilePath('Du har angivit att du vill att programmet ska använda en fil för att läsa från och skriva till.', suggestedFile: filePath);  
+
+        filePath ??= 'heroes.json';
+
+        HeroStorageManaging storage = HeroFileManager(filePath);
         registerHeroDataManager(HeroDataManager(storage: storage));  
         break;
    
       default:  
-        print('Du har valt att köra programmet utan lagring. Inga hjältar finns när programmet startar och inga hjältar kommer att sparas till annan körning.');
+        print('Du har valt att köra programmet utan lagring. Inga hjältar finns när programmet startar och inga hjältar kommer att sparas till annan körning. Om du vill använda en fil för att lagra hjältar starta programmet med argumentet -f.');
         waitForEnter('Tryck ENTER för att starta.');       
         registerHeroDataManager(HeroDataManager()); 
         break;     
@@ -146,7 +144,7 @@ void _registerManagers(StorageType storageType, String? filePath) {
 
   if (arguments.isNotEmpty) {   
     
-    String flag = arguments[0]; // första argumentet ska vara -t, -f eller -d
+    String flag = arguments[0]; // första argumentet ska vara -t, -f 
 
     if (flag == '-t') {
       type = StorageType.test;

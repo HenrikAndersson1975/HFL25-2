@@ -61,25 +61,38 @@ class HeroModel {
   }
 
 
-  /*static int? _toInt(dynamic value) {     
-      if (value == null) { return null; }
-      else if (value is int) { return value; }
-      else if (value is String) { return int.tryParse(value); }
-      else { return null; } 
-    }*/
-
-
   String? toDisplayString({int? number}) {
 
-    // TODO
     String? s = "";
     
-    String name = this.name ?? 'Okänt namn';
-    String strength = powerstats?.strength.toString() ?? 'Okänd styrka';
+    String name = this.name ?? 'okänt namn';
+    String gender = appearance?.gender ?? 'okänt';
+    String strength = powerstats?.strength.toString() ?? 'okänd styrka';
+    String alignment = biography?.alignment ?? 'okänt';
+
+    
+    gender = _translate(gender, {
+      'Female': 'kvinna',
+      'Male': 'man',
+      'Other': 'annat'
+    });
+
+    alignment = _translate(alignment, {
+      'good': 'god',
+      'bad': 'ond',
+      'neutral': 'neutral'
+    });
 
     if (number != null) { s+='$number. ';}
-    s+= 'Namn: $name, Styrka: $strength';
+    s+= 'Namn: $name, Kön: $gender, Styrka: $strength, Moralisk inriktning: $alignment';
     return s;
   }
 
+  String _translate(String word, Map<String,String> dictionary) {
+    if (dictionary.containsKey(word)) {
+      return dictionary[word]!;
+    } else {
+      return word;
+    }
+  }
 }
