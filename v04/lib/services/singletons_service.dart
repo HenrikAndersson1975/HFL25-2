@@ -34,5 +34,3 @@ void registerHeroNetworkManager(HeroNetworkManager instance)  {
   final getIt = GetIt.instance;
   getIt.registerSingleton<HeroNetworkManager>(instance);  
 }
-
-

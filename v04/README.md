@@ -1,4 +1,9 @@
-# v03 #
+# v04 #
+
+
+# TODO --- här ska det vara en manual för hur man kör programmet #
+# nedan stämmer inte heller längre #
+
 
 ## START ##
 För att köra programmet från projektmappen v03 skriv: dart run bin/main.dart.  

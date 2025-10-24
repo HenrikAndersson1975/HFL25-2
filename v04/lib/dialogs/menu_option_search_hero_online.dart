@@ -1,11 +1,13 @@
+//import 'dart:io';
+//import 'dart:convert';
+import 'package:v04/dialogs/dialog_enter_hero_name.dart';
 import 'package:v04/models/exports_hero_models.dart';
 import 'dialogs_helper.dart';
-import 'package:v04/services/singletons_service.dart';
-import 'package:v04/interfaces/hero_data_managing.dart';
-import 'package:v04/dialogs/dialog_enter_hero_name.dart';
+//import 'package:v04/services/singletons_service.dart';
+//import 'package:v04/interfaces/hero_data_managing.dart';
 
-/// 
-Future<void> menuOptionSearchHero() async {
+
+Future<void> menuOptionSearchHeroOnline() async {
 
   bool isRunning = true;
 
@@ -14,28 +16,32 @@ Future<void> menuOptionSearchHero() async {
     clearScreen();
     print('--- Sök hjälte ---');
 
-
-
     String? partOfHeroName = dialogEnterHeroName();
-
+ 
     if (partOfHeroName == null || partOfHeroName.isEmpty) {
       print('Inget namn angivet.');    
     }
     else {    
       List<HeroModel> matchingHeroes = await _getSearchResult(partOfHeroName);
       _showSearchResult(partOfHeroName, matchingHeroes);
+
+      // fråga vad man vill göra med resultatet
+      // fråga om man vill spara hjältarna till lista
+
     }
 
-    // Frågar användaren om den vill göra en ny sökning eller avsluta
+    //Frågar användaren om den vill göra en ny sökning eller avsluta
     isRunning = acceptOrDecline('\nVill du göra en ny sökning? (j/n) ', 'j', 'n');
   }
+
 }
 
-
 Future<List<HeroModel>> _getSearchResult(String partOfHeroName) async {
-    HeroDataManaging manager = getHeroDataManager();
-    List<HeroModel> matchingHeroes = await manager.findHeroesByName(partOfHeroName, false);
-    return matchingHeroes;
+    //HeroDataManaging manager = getHeroDataManager();
+    //List<HeroModel> matchingHeroes = await manager.findHeroesByName(partOfHeroName, false);
+    //return matchingHeroes;
+
+    return [];
 }
 
 void _showSearchResult(String partOfHeroName, List<HeroModel> matchingHeroes) {

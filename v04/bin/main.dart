@@ -50,7 +50,7 @@ void main(List<String> arguments) async {
 
 /// Alternativ i programmets huvudmeny
 enum MainMenuAction {
-  addHero, listHeroes, searchHero, exit, testhttp
+  addHero, listHeroes, searchHero, exit, searchHeroOnline
 }
 
 /// Menyloopen
@@ -61,10 +61,10 @@ Future<void> _runMainMenu() async {
     MainMenuAction menuChoice = dialogMenu<MainMenuAction>(
       '=== MENY ===',
       [
-        MenuOption(MainMenuAction.testhttp, 'Sök hjälte ... test http'),
-        MenuOption(MainMenuAction.addHero, 'Skapa hjälte och spara i lokal lista'),
-        MenuOption(MainMenuAction.listHeroes, 'Visa hjältar i lokal lista'),
-        MenuOption(MainMenuAction.searchHero, 'xxxxSök hjälte i lokal lista'),
+        MenuOption(MainMenuAction.searchHeroOnline, 'Sök hjälte online'),
+        MenuOption(MainMenuAction.addHero, 'Skapa hjälte och spara i lokal lagring'),
+        MenuOption(MainMenuAction.listHeroes, 'Visa hjältar i lokal lagring'),
+        MenuOption(MainMenuAction.searchHero, 'Sök hjälte i lokal lagring'),
         MenuOption(MainMenuAction.exit, 'Avsluta'),
       ],
       'Välj ett alternativ: ',
@@ -72,8 +72,8 @@ Future<void> _runMainMenu() async {
 
     switch (menuChoice) {
 
-      case MainMenuAction.testhttp: 
-        //await dialogSearchHeroTESTHTTP();
+      case MainMenuAction.searchHeroOnline: 
+        await menuOptionSearchHeroOnline();
         break;
 
       case MainMenuAction.addHero:
@@ -111,7 +111,8 @@ void _registerManagers(StorageType storageType, String? filePath) {
 
       // om man vill starta i testläge
       case StorageType.test:   
-        print('Programmet startar i testläge. En testlista med hjältar kommer att laddas.'); 
+        print('Programmet startar i testläge. En testlista med hjältar kommer att laddas.');
+        print(''); 
         waitForEnter('Tryck ENTER för att starta.');     
         registerHeroDataManager(MockHeroDataManager());   
         break;
@@ -127,7 +128,11 @@ void _registerManagers(StorageType storageType, String? filePath) {
         break;
    
       default:  
-        print('Du har valt att köra programmet utan lagring. Inga hjältar finns när programmet startar och inga hjältar kommer att sparas till annan körning. Om du vill använda en fil för att lagra hjältar starta programmet med argumentet -f.');
+        print('Du har valt att köra programmet utan lagring.');
+        print('Inga hjältar finns när programmet startar och inga hjältar kommer att sparas till annan körning.');
+        print('Om du vill använda en fil för att lagra hjältar starta programmet med argumentet -f.');
+        print('');
+  
         waitForEnter('Tryck ENTER för att starta.');       
         registerHeroDataManager(HeroDataManager()); 
         break;     
