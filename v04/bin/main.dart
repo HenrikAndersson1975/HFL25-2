@@ -1,16 +1,22 @@
-import 'package:v03/dialogs/exports_dialogs.dart'; 
-import 'package:v03/interfaces/hero_data_managing.dart';
-import 'package:v03/managers/hero_data_manager.dart';
-import 'package:v03/interfaces/hero_storage_managing.dart';
-import 'package:v03/managers/hero_file_manager.dart';
-//import 'package:v03/managers/hero_database_manager.dart';
-import '../test/mocks/mock_hero_data_manager.dart';
-import 'package:get_it/get_it.dart';
 
-import 'package:v03/dialogs/dialog_search_heroTESTHTTP.dart'; // TEMP
+
+import 'package:v04/dialogs/exports_dialogs.dart'; 
+import 'package:v04/managers/hero_data_manager.dart';
+import 'package:v04/managers/hero_file_manager.dart';
+import 'package:v04/services/singletons_service.dart';
+
+import '../test/mocks/mock_hero_data_manager.dart';
+
+import 'package:v04/managers/hero_network_manager.dart';
+
+import 'package:v04/interfaces/hero_storage_managing.dart';
+
 
 void main(List<String> arguments) async {
   
+
+
+
 // todo
 // ska lägga till att man kan söka hjälte via api
 
@@ -25,7 +31,7 @@ void main(List<String> arguments) async {
   clearScreen();  
 
   // analysera startargument
-  var (storageType, filePath) = _handleArguments(arguments);
+  var (storageType, filePath) = _analyseArguments(arguments);
   // -t 
   // -f   
   // -f filnamn 
@@ -72,7 +78,7 @@ Future<void> _runMainMenu() async {
     switch (menuChoice) {
 
       case MainMenuAction.testhttp: 
-        await dialogSearchHeroTESTHTTP();
+        //await dialogSearchHeroTESTHTTP();
         break;
 
       case MainMenuAction.addHero:
@@ -101,9 +107,10 @@ enum StorageType {
 
 
 
+
+
 void _registerManagers(StorageType storageType, String? filePath) {
 
-  final getIt = GetIt.instance;
 
     switch (storageType) {
 
@@ -111,26 +118,28 @@ void _registerManagers(StorageType storageType, String? filePath) {
       case StorageType.test:   
         print('Programmet startar i testläge. En testlista med hjältar kommer att laddas.'); 
         waitForEnter('Tryck ENTER för att starta.');     
-        getIt.registerSingleton<HeroDataManaging>(MockHeroDataManager());        
+        registerHeroDataManager(MockHeroDataManager());   
         break;
       
       // om man vill använda fil för att läsa och skriva hjältar till
       case StorageType.file:
-        filePath = dialogFilePath('Du har angivit att du vill att programmet ska använda en fil för att läsa från och skriva till.', suggestedFile: filePath);   
-        HeroStorageManaging storage = HeroFileManager(filePath ?? 'heroes.json');    
-        getIt.registerSingleton<HeroDataManaging>(HeroDataManager(storage: storage));  
+        filePath = dialogFilePath('Du har angivit att du vill att programmet ska använda en fil för att läsa från och skriva till.', suggestedFile: filePath);       
+        HeroStorageManaging storage = HeroFileManager(filePath ?? 'heroes.json');
+        registerHeroDataManager(HeroDataManager(storage: storage));  
         break;
    
       default:  
         print('Du har valt att köra programmet utan lagring. Inga hjältar finns när programmet startar och inga hjältar kommer att sparas till annan körning.');
-        waitForEnter('Tryck ENTER för att starta.');
-        getIt.registerSingleton<HeroDataManaging>(HeroDataManager(storage: null)); 
+        waitForEnter('Tryck ENTER för att starta.');       
+        registerHeroDataManager(HeroDataManager()); 
         break;     
     } 
+
+    registerHeroNetworkManager(HeroNetworkManager());
 }
 
 
-(StorageType,String?) _handleArguments(List<String> arguments) {
+(StorageType,String?) _analyseArguments(List<String> arguments) {
   
   StorageType type = StorageType.none;
   String? filePath;

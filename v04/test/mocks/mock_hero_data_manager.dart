@@ -1,48 +1,49 @@
 
-import 'package:v03/models/exports_hero_models.dart';
-import 'package:v03/interfaces/hero_data_managing.dart';
+import 'package:v04/models/exports_hero_models.dart';
+import 'package:v04/interfaces/hero_data_managing.dart';
+import 'package:v04/services/unique_id_service.dart';
 
 
 class MockHeroDataManager implements HeroDataManaging {
   
   final List<HeroModel> _heroList = [
     HeroModel(    
-      id: 1,
+      id: getUniqueId(),
       name: "Martina Navratilova",
       powerstats: Powerstats(intelligence: 90, strength: 95, speed: 80, durability: 85, power: 100, combat: 75),
       biography: Biography(fullName: "Vansinne", alignment: "god"),
       appearance: Appearance(gender: "kvinna"),
     ),
     HeroModel(
-      id: 2,
+      id: getUniqueId(),
       name: "Bosse Hansson",
       powerstats: Powerstats(intelligence: 70, strength: 65, speed: 75, durability: 60, power: 80, combat: 70),
       biography: Biography(fullName: "Bo Hansson", alignment: "ond"),
       appearance: Appearance(gender: "man"),
     ),
     HeroModel(
-      id: 3,
+      id: getUniqueId(),
       name: "Sven Jerring",
       powerstats: Powerstats(intelligence: 85, strength: 55, speed: 90, durability: 70, power: 95, combat: 65),
       biography: Biography(fullName: "Sven Jerring", alignment: "neutral"),
       appearance: Appearance(gender: "man"),
     ),
     HeroModel(
-      id: 4,
+      id: getUniqueId(),
       name: "Ivan Lendl",
       powerstats: Powerstats(intelligence: 63, strength: 78, speed: 52, durability: 85, power: 60, combat: 50),
       biography: Biography(fullName: "Ivan Lendl", alignment: "ond"),
       appearance: Appearance(gender: "man"),
     ),
     HeroModel(
-      id: 5,
+      id: getUniqueId(),
       name: "Jimmy Connors",
       powerstats: Powerstats(intelligence: 70, strength: 74, speed: 51, durability: 85, power: 60, combat: 50),
       biography: Biography(fullName: "James Connors", alignment: "ond"),
       appearance: Appearance(gender: "man"),
     ),
     HeroModel(
-      id: 6,
+      id: getUniqueId(),
       name: "Droppen",
       powerstats: Powerstats(intelligence: 100, strength: 50, speed: 50, durability: 100, power: 20, combat: 20),
       biography: Biography(fullName: "Mats Wilander", alignment: "god"),
@@ -50,21 +51,43 @@ class MockHeroDataManager implements HeroDataManaging {
     ),
   ];
 
-  /// Laddar hjältar (mock: gör inget, listan finns redan)
+  
+
   @override
-  Future<bool> loadHeroes() async {
-    return true;
+  Future<bool> addHero(HeroModel hero) async {
+    // Se till att hjälten har ett unikt id
+    hero.id ??= getUniqueId();
+
+    // Om id är null, ska vi kasta ett fel
+    if (hero.id == null) {
+      throw Exception('Hjälten kan inte ha ett null-id.');
+    }
+
+    // Kontrollera om hjälten redan finns i listan
+    bool exists = _heroList.any((h) => h.id == hero.id);
+
+    if (!exists) {    
+      _heroList.add(hero);  // Spara hjälten till listan      
+      return true;
+    } else {
+      throw Exception('Det finns redan en hjälte med samma id.');
+    }
   }
+
 
   
 
-  /// Spara hjälte (lägg till i listan)
   @override
-  Future<bool> saveHero(HeroModel hero) async {
-    hero.id ??= _getNextHeroId();
-    _heroList.add(hero);
-    return true;
+  Future<bool> deleteHero(String heroId) async {
+     
+    int count = _heroList.length;
+
+    _heroList.removeWhere((h) => h.id == heroId);
+    bool anyDeleted = _heroList.length != count;
+  
+    return anyDeleted;  
   }
+
 
   /// Sök hjältar efter namn (case-insensitive om caseSensitive=false)
   @override
@@ -82,13 +105,5 @@ class MockHeroDataManager implements HeroDataManaging {
   @override
   Future<List<HeroModel>> getHeroes() async => _heroList;
 
-  /// Hjälpfunktion för att generera nästa id
-  int _getNextHeroId() {
-    int maxId = 0;
-    for (var hero in _heroList) {
-      int id = hero.id ?? 0;
-      if (id > maxId) maxId = id;
-    }
-    return maxId + 1;
-  }
+  
 }

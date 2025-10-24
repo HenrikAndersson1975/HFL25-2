@@ -10,7 +10,7 @@ import 'work_model.dart';
 class HeroModel {
   
   String? response;
-  int? id;
+  String? id;
   String? name;
   Powerstats? powerstats;
   Biography? biography;
@@ -35,7 +35,7 @@ class HeroModel {
 
     return HeroModel(
       response: json['response'],
-      id: _toInt(json['id']),
+      id: json['id'],
       name: json['name'],
       powerstats: Powerstats.fromJson(json['powerstats']),
       biography: Biography.fromJson(json['biography']),
@@ -49,7 +49,7 @@ class HeroModel {
   Map<String, dynamic> toJson() {
     return {
       'response': response,
-      'id': id?.toString(),
+      'id': id,
       'name': name,
       'powerstats': powerstats?.toJson(),
       'biography': biography?.toJson(),
@@ -61,12 +61,12 @@ class HeroModel {
   }
 
 
-  static int? _toInt(dynamic value) {     
+  /*static int? _toInt(dynamic value) {     
       if (value == null) { return null; }
       else if (value is int) { return value; }
       else if (value is String) { return int.tryParse(value); }
       else { return null; } 
-    }
+    }*/
 
 
   String? toDisplayString({int? number}) {

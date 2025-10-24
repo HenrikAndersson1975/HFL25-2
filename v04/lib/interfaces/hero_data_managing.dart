@@ -1,9 +1,9 @@
 import '../models/exports_hero_models.dart';
 
 abstract class HeroDataManaging
-{
-  Future<bool> loadHeroes();
+{  
   Future<List<HeroModel>> findHeroesByName(String pattern, bool caseSensitive);
-  Future<bool> saveHero(HeroModel hero);
+  Future<bool> addHero(HeroModel hero);
+  Future<bool> deleteHero(String id);
   Future<List<HeroModel>> getHeroes();
 }

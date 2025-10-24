@@ -1,10 +1,7 @@
-import 'package:v03/models/exports_hero_models.dart';
+import 'package:v04/models/exports_hero_models.dart';
 abstract class HeroStorageManaging {
-  Future<void> replaceItemCollection(List<HeroModel> heroes);
-  Future<void> addNewItem(HeroModel hero);
-  Future<List<HeroModel>> load(); 
-
-  SaveType getSaveType();
+  Future<void> deleteHero(String heroId);
+  Future<void> upsertHero(HeroModel hero);
+  Future<List<HeroModel>> getHeroes(); 
 }
 
-enum SaveType { addNewItem, replaceItemCollection }

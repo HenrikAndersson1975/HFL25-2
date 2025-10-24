@@ -1,7 +1,8 @@
 import 'dialogs_helper.dart';
-import 'package:v03/models/exports_hero_models.dart';
-import 'package:v03/services/hero_manager_service.dart';
-import 'package:v03/interfaces/hero_data_managing.dart';
+import 'package:v04/models/exports_hero_models.dart';
+import 'package:v04/services/singletons_service.dart';
+import 'package:v04/interfaces/hero_data_managing.dart';
+
 
 Future<void> dialogCreateHero() async {
   HeroModel? hero = _createHero();   
@@ -13,22 +14,20 @@ Future<void> dialogCreateHero() async {
     print(hero.toDisplayString());
     print('');
 
-    await _saveHero(hero);
+    try {
+      // Försök att lägga till hjälten till listan
+      HeroDataManaging manager = getHeroDataManager();
+      await manager.addHero(hero);
+    }
+    catch (e) {
+      print(e);
+    }
+    
+    print('');
+    waitForEnter('Tryck ENTER för att fortsätta');
   }
 }
 
-/// Sparar hjälten och skriver ut hjälten
-Future<void> _saveHero(HeroModel hero) async {
-
-  HeroDataManaging manager = getHeroManager();
-
-  print('Sparar hjälten till storage.');  
-  bool success = await manager.saveHero(hero);
-  if (success) print('Klart.');
-
-  print('');
-  waitForEnter('Tryck ENTER för att fortsätta');
-}
 
 
 /// Användaren fyller i egenskaper för en hjälte som sedan skapas och returneras.
@@ -43,6 +42,7 @@ HeroModel? _createHero() {
   String gender = getStringFromUser('Kön', validValues:["kvinna","man","annat"]);
   String alignment = getStringFromUser('Moralisk inriktning', validValues:["god","ond","neutral"]);
 
+// måste översätta alignment till engelska...
 
   Appearance? appearance = Appearance(gender: gender, race: null, height: null, weight: null, eyeColor: null, hairColor: null);  
   Powerstats? powerstats = Powerstats(intelligence: null, strength: strength, speed: null, durability: null, power:null, combat: null);

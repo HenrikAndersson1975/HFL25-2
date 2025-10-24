@@ -1,7 +1,7 @@
 import 'dialogs_helper.dart';
-import 'package:v03/models/exports_hero_models.dart';
-import 'package:v03/services/hero_manager_service.dart';
-import 'package:v03/interfaces/hero_data_managing.dart';
+import 'package:v04/models/exports_hero_models.dart';
+import 'package:v04/services/singletons_service.dart';
+import 'package:v04/interfaces/hero_data_managing.dart';
 
 /// Visar alla hjältar i listan, sorterade efter styrka (starkaste först)
 Future<void> dialogListHeroes() async {
@@ -10,7 +10,7 @@ Future<void> dialogListHeroes() async {
 
   print('--- Lista över hjältar ---');
 
-  HeroDataManaging manager = getHeroManager();
+  HeroDataManaging manager = getHeroDataManager();
 
   // Sorterar listan efter hjältarnas styrka, starkaste först
   List<HeroModel> heroes = await manager.getHeroes();

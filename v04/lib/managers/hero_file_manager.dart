@@ -1,49 +1,101 @@
-import 'package:v03/interfaces/hero_storage_managing.dart';
-import 'package:v03/models/exports_hero_models.dart';
-import 'dart:io';
+import 'package:v04/interfaces/hero_storage_managing.dart';
+import 'package:v04/models/exports_hero_models.dart';
 import 'dart:convert';
+import 'package:v04/services/file_service.dart';
 
-class HeroFileManager implements HeroStorageManaging
-{
-  // Skapar instans, som sedan kommer att returneras varje gång HeroDataManager() anropas.
-  static final HeroFileManager _instance = HeroFileManager._privateConstructor();
 
-  // Privat konstruktor
-  HeroFileManager._privateConstructor();
+class HeroFileManager implements HeroStorageManaging {
 
-  String? _filePath;
-
-  // Factory-konstruktor som alltid returnerar samma instans
+  // FileService-instans som hanterar filen 'filePath'
+  final FileService _fileService;
+  
+  // Factory för att skapa instans av HeroFileManager
   factory HeroFileManager(String filePath) {
-    _instance._filePath = filePath;
-    return _instance;
+    return HeroFileManager._(FileService(filePath));
+  }
+  
+  // Privat konstruktor
+  HeroFileManager._(this._fileService);
+
+  @override
+  Future<bool> upsertHero(HeroModel hero) async {
+
+    // Vill egentligen bara lägga till en hjälte till storage.
+    // Men eftersom en fil används för att lagra alla hjältar, måste hela filen skrivas om.
+    // Alternativt hade man kunnat ha en hjälte per fil.
+
+    if (hero.id?.isEmpty ?? true)
+    {
+      throw Exception('Hjälte saknar id.');    
+    }
+    else {         
+      // Laddar listan
+      List<HeroModel> heroes = await _readHeroList();
+
+      // Tar bort om det finns hjälte med id
+      heroes.removeWhere((h) => h.id == hero.id);
+
+      // Lägger till hjälte till lista
+      heroes.add(hero);
+
+      // Skriver listan till fil
+      bool success = await _writeHeroList(heroes);
+      return success; 
+    }
   }
 
   @override
-  SaveType getSaveType() {
-   return SaveType.replaceItemCollection; // visar att detta storage inte kan ta emot ett element, utan vill ersätta hela listan
+  Future<bool> deleteHero(String heroId) async {
+
+    // Laddar listan
+    List<HeroModel> heroes = await _readHeroList();
+
+    // Antal hjältar för borttagningsförsök
+    int count = heroes.length;
+
+    // Tar bort om det finns hjälte med id
+    heroes.removeWhere((h) => h.id == heroId);
+    bool anyDeleted = heroes.length != count;
+
+    if (anyDeleted) {
+      // Hjälte har tagits bort, så uppdaterad lista måste skrivas till fil
+      bool success = await _writeHeroList(heroes);
+      return success; 
+    }
+    else {
+      return false;
+    }
   }
 
   @override
-  Future<void> addNewItem(HeroModel hero) async {
-    throw Exception("Detta storage kan inte ta emot element, utan vill ersätta hela listan.");
+  Future<List<HeroModel>> getHeroes() async {
+    List<HeroModel> heroes = await _readHeroList();
+    return heroes;
   }
 
-  @override
-  Future<void> replaceItemCollection(List<HeroModel> heroes) async {
-    final file = File(_filePath ?? '');  
-    final jsonString = jsonEncode(heroes.map((hero) => hero.toJson()).toList());
-    await file.writeAsString(jsonString);
+  
+
+  // Funktion för att skriva hjältelista till fil
+  Future<bool> _writeHeroList(List<HeroModel> heroes) async {
+    try {  
+      String jsonString = jsonEncode(heroes.map((hero) => hero.toJson()).toList());     
+      return await _fileService.write(jsonString);  
+    } catch (e) {
+      print('Fel vid skrivning av hjälte lista: $e');
+      return false;
+    }
   }
 
-  @override
-  Future<List<HeroModel>> load() async {
-    final file = File(_filePath ?? '');
-    if (!await file.exists()) {
+  // Funktion för att läsa hjältelista från fil
+  Future<List<HeroModel>> _readHeroList() async {
+    try {
+      String jsonString = await _fileService.read();  
+      List<dynamic> jsonList = jsonDecode(jsonString);  
+      List<HeroModel> heroes = jsonList.map((json) => HeroModel.fromJson(json)).toList();
+      return heroes;
+    } catch (e) {
+      print('Fel vid läsning av hjälte lista: $e');
       return [];
     }
-    final jsonString = await file.readAsString();  
-    final List<dynamic> jsonList = jsonDecode(jsonString);
-    return jsonList.map((json) => HeroModel.fromJson(json)).toList();
-  }
+  } 
 }

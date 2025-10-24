@@ -1,12 +1,12 @@
 
-import 'package:v03/models/exports_hero_models.dart';
+import 'package:v04/models/exports_hero_models.dart';
 import 'mocks/mock_hero_data_manager.dart';
 
 Future<void> main() async {
   final manager = MockHeroDataManager();
 
   print("\nLägg till ny hjälte:");
-  await manager.saveHero(HeroModel(
+  await manager.addHero(HeroModel(
     name: "Phantom Blaze",
     powerstats: Powerstats(intelligence: 70),
     biography: Biography(fullName: "Finn Phantom"),
@@ -17,7 +17,7 @@ Future<void> main() async {
   HeroModel theJsonHero = HeroModel.fromJson(_jsonHero);
 
   print("\nLägg till json-hjälten:");
-  await manager.saveHero(theJsonHero);
+  await manager.addHero(theJsonHero);
 
   print("\nLista alla hjältar:");
   for (var hero in await manager.getHeroes()) {
