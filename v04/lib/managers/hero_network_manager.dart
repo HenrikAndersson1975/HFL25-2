@@ -18,9 +18,11 @@ class HeroNetworkManager implements HeroNetworkManaging {
   HeroNetworkManager._(this._networkService);
 
   @override
-  Future<List<HeroModel>?> getHeroesByName(String searchPattern) async {
+  Future<(bool success, List<HeroModel> heroes)> findHeroesByName(String searchPattern) async {
 
+    bool success =  false;
     List<HeroModel>? returnList;  
+    
 
     String encodedSearchPattern = Uri.encodeComponent(searchPattern); // Koda om tecken så att de fungerar i url
 
@@ -34,13 +36,11 @@ class HeroNetworkManager implements HeroNetworkManaging {
 
       dynamic body = jsonDecode(responseFromService);
 
-      bool success = (body['response'] ?? '') == 'success';
+      success = (body['response'] ?? '') == 'success';
 
       if (success) {
       
-
         List<dynamic> resultsList = body['results']; // I listan ligger json för de hjältar som servern returnerat
-
         returnList = [];
 
         // Skapa HeroModel för varje result
@@ -48,15 +48,13 @@ class HeroNetworkManager implements HeroNetworkManaging {
           dynamic oneHeroJson = resultsList[i];
           var hero = HeroModel.fromJson(oneHeroJson);
           returnList.add(hero);
-        }
-        
-        //return response.body; // jsondecode()  för att få Map<string,dynamic>
+        }           
       }
     }
     catch (e) {
         print(e);
     }
       
-    return returnList;
+    return (success, returnList ?? []);
   } 
 }

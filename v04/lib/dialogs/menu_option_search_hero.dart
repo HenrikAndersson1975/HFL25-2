@@ -34,6 +34,7 @@ Future<void> menuOptionSearchHero() async {
 
 Future<List<HeroModel>> _getSearchResult(String partOfHeroName) async {
     HeroDataManaging manager = getHeroDataManager();
+    
     List<HeroModel> matchingHeroes = await manager.findHeroesByName(partOfHeroName, false);
     return matchingHeroes;
 }
