@@ -2,6 +2,7 @@ import 'package:v04/interfaces/hero_storage_managing.dart';
 import 'package:v04/services/unique_id_service.dart';
 import '../interfaces/hero_data_managing.dart';
 import '../models/hero_model.dart';
+import 'dart:io';
 
 class HeroDataManager implements HeroDataManaging
 {
@@ -47,9 +48,10 @@ class HeroDataManager implements HeroDataManaging
       }
 
     } catch (e) {
-      print('Fel vid sparande av hjälte: $e');
+      stdout.write(e);
       return false;
     }   
+   
   }
 
 

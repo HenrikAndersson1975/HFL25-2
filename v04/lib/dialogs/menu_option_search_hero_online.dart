@@ -1,13 +1,13 @@
-//import 'dart:io';
-//import 'dart:convert';
+
+import 'dart:io';
+
 import 'package:v04/dialogs/dialog_enter_hero_name.dart';
 import 'package:v04/dialogs/dialog_menu.dart';
+import 'package:v04/interfaces/hero_data_managing.dart';
 import 'package:v04/managers/hero_network_manager.dart';
 import 'package:v04/models/exports_hero_models.dart';
 import 'package:v04/services/singletons_service.dart';
 import 'dialogs_helper.dart';
-//import 'package:v04/services/singletons_service.dart';
-//import 'package:v04/interfaces/hero_data_managing.dart';
 
 
 Future<void> menuOptionSearchHeroOnline() async {
@@ -17,6 +17,7 @@ Future<void> menuOptionSearchHeroOnline() async {
   while(isRunning) {
    
     clearScreen();
+
     print('--- Sök hjälte ---');
 
     String? partOfHeroName = dialogEnterHeroName();
@@ -37,8 +38,8 @@ Future<void> menuOptionSearchHeroOnline() async {
         int menuChoice = dialogMenu<int>(
           '\nHur vill du hantera sökresultatet?',
           [
-            MenuOption(1, 'Spara alla hjältar till lokal lagring'),
-            MenuOption(2, 'Välj vilka hjältar som ska sparas till lokal lagring'),
+            MenuOption(1, 'Spara alla hjältar'),
+            MenuOption(2, 'Välj vilka hjältar som ska sparas'),
             MenuOption(3, 'Gör ingenting'),        
           ],
           'Välj ett alternativ: ',
@@ -46,7 +47,7 @@ Future<void> menuOptionSearchHeroOnline() async {
 
         switch (menuChoice) {
           case 1: 
-            _saveHeroes(matchingHeroes);
+            await _saveHeroes(matchingHeroes);
             break;
           case 2: 
             _saveSelectedHeroes(matchingHeroes);
@@ -67,8 +68,26 @@ Future<void> menuOptionSearchHeroOnline() async {
 }
 
 
-void _saveHeroes(List<HeroModel> heroes) {
-  print('.... detta ska implementeras... alla hjälar ska sparas');
+Future<void> _saveHeroes(List<HeroModel> heroes) async {
+
+  clearScreen();
+
+  HeroDataManaging manager = getHeroDataManager();
+
+  for (int i=0; i < heroes.length; i++) {
+    HeroModel hero = heroes[i];
+
+    stdout.write('\nSparar ${hero.name}...');
+    try {
+      bool success = await manager.addHero(hero);
+      if (success) { stdout.write('OK'); }
+    }
+    catch (e) {
+      stdout.write(e);
+    }
+  }
+
+  print('');  
 }
 void _saveSelectedHeroes(List<HeroModel> heroes) {
   print('.... detta ska implementeras... ska välja vilka som ska sparas');

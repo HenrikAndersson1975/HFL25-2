@@ -58,6 +58,9 @@ Future<void> _runMainMenu() async {
   bool isRunning = true;
 
   while (isRunning) {
+    
+    clearScreen();
+
     MainMenuAction menuChoice = dialogMenu<MainMenuAction>(
       '=== MENY ===',
       [

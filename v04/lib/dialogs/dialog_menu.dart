@@ -13,7 +13,7 @@ T dialogMenu<T>(String header, List<MenuOption<T>> menuOptions, String prompt) {
 
   T? selectedValue;
 
-  clearScreen();
+  
 
   // Kör tills användaren gör ett giltigt val
   while (selectedValue == null) {
