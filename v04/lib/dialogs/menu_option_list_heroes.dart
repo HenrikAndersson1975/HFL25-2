@@ -17,11 +17,11 @@ Future<void> menuOptionListHeroes() async {
   List<HeroModel> heroes = await manager.getHeroes();  
 
   // Definierar default-värden för sortering och filtering
-  int defaultSorting = _Sorting.none; 
+  List<String> defaultSorting = []; 
   List<String> defaultAlignmentFilter = ["good", "neutral", "bad"];
 
   // Sätter gällande inställning för sortering och filtrering
-  int sorting = defaultSorting;
+  List<String> sorting = []..addAll(defaultSorting);
   List<String> alignmentFilter = []..addAll(defaultAlignmentFilter);
   
   bool isRunning = true;
@@ -35,13 +35,11 @@ Future<void> menuOptionListHeroes() async {
 
     print('--- Lista över hjältar ---');
 
-    
-
     // Skriver ut listan
     _printHeroList(filteredAndSortedHeroes);
 
     //
-    print('Listan innehåller ${heroes.length} ${heroes.length == 1 ? 'hjälte' : 'hjältar'}.');
+    print('\nListan innehåller ${heroes.length} ${heroes.length == 1 ? 'hjälte' : 'hjältar'}, varav ${filteredAndSortedHeroes.length} ${filteredAndSortedHeroes.length == 1 ? 'hjälte' : 'hjältar'} visas med nuvarande filtrering');
 
     // Skriver ut gällande inställningar för listan
     _printCurrentFilter(alignmentFilter);
@@ -59,47 +57,136 @@ Future<void> menuOptionListHeroes() async {
 
     switch(action) {
       case _MenuAction.editSorting: 
-        print('todo'); waitForEnter('tryck enter');  // TODO
+        sorting = _menuOptionEditSorting(sorting);
         break;
       case _MenuAction.editFilter: 
-        print('todo'); waitForEnter('tryck enter');  // TODO
+        alignmentFilter = _menuOptionEditFilter(alignmentFilter);
         break;
       case _MenuAction.reset: 
-        sorting = defaultSorting;
-        alignmentFilter = []..addAll(defaultAlignmentFilter);
+        sorting.clear(); sorting.addAll(defaultSorting);
+        alignmentFilter.clear(); alignmentFilter.addAll(defaultAlignmentFilter);
         break;
       case _MenuAction.exit:
         isRunning = false;
         break;
+      default:
+        break;
     }
   }
+}
 
+List<String> _menuOptionEditSorting(List<String> sorting) {
+  
+  // arbetar med kopia av värden
+  List<String> list = [];
+  list.addAll(sorting);
+
+  bool isRunning = true;
+
+  while(isRunning) {
+
+    clearScreen();
+
+    print('--- Inställning för sortering ---');
+
+    // Visa meny 
+    String action = dialogMenu('', 
+    [
+      MenuOption('name', '${list.contains("name") ? "ON":"OFF"} Namn'),
+      MenuOption('strength', '${list.contains("strength") ? "ON":"OFF"} Styrka'),   
+      MenuOption('exit', '    Tillbaka')
+    ], 
+    'Välj ett alternativ: ');
+
+    switch(action) {
+      case 'name': 
+      case 'strength': 
+        _swap(list, action);
+        break;    
+      default:
+        isRunning = false;
+        break;
+    }
+  }
+  
+  return list;
+}
+List<String> _menuOptionEditFilter(List<String> alignmentFilter) {
+
+  // arbetar med kopia av värden
+  List<String> list = [];
+  list.addAll(alignmentFilter);
+
+  bool isRunning = true;
+
+  while(isRunning) {
+
+    clearScreen();
+
+    print('--- Inställning för filtrering ---');
+
+    // Visa meny 
+    String action = dialogMenu('', 
+    [
+      MenuOption('good', '${list.contains("good") ? "ON":"OFF"} God'),
+      MenuOption('neutral', '${list.contains("neutral") ? "ON":"OFF"} Neutral'), 
+      MenuOption('bad', '${list.contains("bad") ? "ON":"OFF"} Ond'),  
+      MenuOption('exit', '    Tillbaka')
+    ], 
+    'Välj ett alternativ: ');
+
+    switch(action) {
+      case 'good': 
+      case 'neutral': 
+      case 'bad':
+        _swap(list, action);
+        break;    
+      default:
+        isRunning = false;
+        break;
+    }
+  }
+  
+  return list;
+}
+
+void _swap(List<String> list, String element) {
+  if (list.contains(element)) {
+    list.remove(element);
+  }
+  else {
+    list.add(element);
+  }
 }
 
 
 /// Alternativ i meny
 enum _MenuAction {
-  editSorting, editFilter, reset, exit
-}
-
-
-class _Sorting {
-  static const int none = 0;
-  static const int name = 1; 
-  static const int strength = 2;
+  editSorting, editFilter, reset, exit,
+  
 }
 
 
 
-List<HeroModel> _filterAndSort(List<HeroModel> heroes, int sorting, List<String> alignmentFilter) {
+
+List<HeroModel> _filterAndSort(List<HeroModel> heroes, List<String> sorting, List<String> alignmentFilter) {
 
   // gör kopia av lista
   List<HeroModel> list = [];
   list.addAll(heroes);
 
+  // filtrera
+  list = _filterByAlignment(list, alignmentFilter);
 
-  //_filterByAlignment(heroes, alignmentFilter);
-
+  // sortera
+  for (int i=0; i<sorting.length; i++) {
+    String sortType = sorting[i];
+    switch (sortType) {
+      case 'name': _sortByName(list); break;
+      case 'strength': _sortByStrength(list); break;
+    }
+  }
+  
   return list;
 }
 
@@ -109,11 +196,15 @@ void _printHeroList(List<HeroModel> heroes) {
     print(s);
   }
 }
-void _printCurrentSorting(int sorting) {
-  print('todo här ska inställning för sortering visas');
+void _printCurrentSorting(List<String> sorting) {
+  String settings = sorting.join(', ');   // översätt???
+  if (settings.isEmpty) settings = '-';
+  print('  Sortering: $settings');
 }
 void _printCurrentFilter(List<String> alignmentFilter) {
-  print('todo här ska inställning för filter visas');
+  String settings = alignmentFilter.join(', ');  // översätt???
+  if (settings.isEmpty) settings = '-';
+  print('  Filter, moralisk inriktning: $settings');
 }
 
 
