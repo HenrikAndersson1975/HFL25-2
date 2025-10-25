@@ -17,9 +17,7 @@ void main(List<String> arguments) async {
   
 
 // todo
-// ska lägga till att man kan söka hjälte via api
 
-// resutat kan sparas till lokal lista
 // man ska kunna ta bort hjälte från lokal lista
 // ska kunna lista god och onda jhjältar var för sig
 
@@ -49,7 +47,7 @@ void main(List<String> arguments) async {
 
 
 /// Alternativ i programmets huvudmeny
-enum MainMenuAction {
+enum _MainMenuAction {
   addHero, listHeroes, searchHero, exit, searchHeroOnline
 }
 
@@ -61,37 +59,37 @@ Future<void> _runMainMenu() async {
     
     clearScreen();
 
-    MainMenuAction menuChoice = dialogMenu<MainMenuAction>(
+    _MainMenuAction menuChoice = dialogMenu<_MainMenuAction>(
       '=== MENY ===',
       [
-        MenuOption(MainMenuAction.searchHeroOnline, 'Sök hjälte online'),
-        MenuOption(MainMenuAction.addHero, 'Skapa hjälte och spara i lokal lagring'),
-        MenuOption(MainMenuAction.listHeroes, 'Visa hjältar i lokal lagring'),
-        MenuOption(MainMenuAction.searchHero, 'Sök hjälte i lokal lagring'),
-        MenuOption(MainMenuAction.exit, 'Avsluta'),
+        MenuOption(_MainMenuAction.searchHeroOnline, 'Sök hjälte online'),
+        MenuOption(_MainMenuAction.addHero, 'Skapa hjälte och spara i lokal lagring'),
+        MenuOption(_MainMenuAction.listHeroes, 'Visa hjältar i lokal lagring'),
+        MenuOption(_MainMenuAction.searchHero, 'Sök hjälte i lokal lagring'),
+        MenuOption(_MainMenuAction.exit, 'Avsluta'),
       ],
       'Välj ett alternativ: ',
     );
 
     switch (menuChoice) {
 
-      case MainMenuAction.searchHeroOnline: 
+      case _MainMenuAction.searchHeroOnline: 
         await menuOptionSearchHeroOnline();
         break;
 
-      case MainMenuAction.addHero:
+      case _MainMenuAction.addHero:
         await menuOptionCreateHero();
         break;
 
-      case MainMenuAction.listHeroes:
+      case _MainMenuAction.listHeroes:
         await menuOptionListHeroes();
         break;
 
-      case MainMenuAction.searchHero:
+      case _MainMenuAction.searchHero:
         await menuOptionSearchHero();
         break;
 
-      case MainMenuAction.exit:
+      case _MainMenuAction.exit:
         bool exit = menuOptionExit();
         isRunning = !exit;
         break;
