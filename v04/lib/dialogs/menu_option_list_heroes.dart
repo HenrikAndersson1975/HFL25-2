@@ -1,6 +1,6 @@
-import 'exports_menu_options.dart';
-import 'menu_option_delete_hero.dart';
+import 'package:v04/services/translation_service.dart';
 
+import 'exports_menu_options.dart';
 import 'dialog_onoff.dart';
 import 'dialogs_helper.dart';
 import 'package:v04/models/exports_hero_models.dart';
@@ -9,9 +9,7 @@ import 'package:v04/interfaces/hero_data_managing.dart';
 import 'dialog_menu.dart';
 
 
-
-
-/// Visar alla hjältar i listan, sorterade efter styrka (starkaste först)
+/// Visar hjältar i lista
 Future<void> menuOptionListHeroes() async {
 
   bool reloadHeroes = true;
@@ -55,23 +53,24 @@ Future<void> menuOptionListHeroes() async {
     _printCurrentSorting(sorting);
 
     // Visa meny 
-    _MenuAction action = dialogMenu('', 
+    _MenuAction action = dialogMenu('\nVad vill du göra med listan?', 
       [
-        MenuOption(_MenuAction.editSorting, 'Ändra sortering'),
-        MenuOption(_MenuAction.editFilter, 'Ändra filtrering'),
-        MenuOption(_MenuAction.reset, 'Återställ sortering och filtrering'),      
         MenuOption(_MenuAction.addHero, 'Lägg till hjälte'),
         MenuOption(_MenuAction.deleteHero, 'Ta bort hjälte'),
+        MenuOption(_MenuAction.editSorting, 'Ändra sortering'),
+        MenuOption(_MenuAction.editFilter, 'Ändra filtrering'),
+        MenuOption(_MenuAction.reset, 'Återställ sortering och filtrering'),             
         MenuOption(_MenuAction.exit, 'Tillbaka')
       ], 
       'Välj ett alternativ: ');
 
+    // Hanterar menyval
     switch(action) {
-      case _MenuAction.editSorting:         
-        sorting = dialogOnOff('Inställning för sortering',  sorting, ['name','strength'], 'Visa lista', 'PÅ', 'AV', 'Välj ett alternativ: ');
+      case _MenuAction.editSorting:           
+        sorting = dialogOnOff('Välj inställning för sortering', sorting, ['name','strength'], 'Visa lista', 'PÅ', 'AV', 'Välj ett alternativ: ');
         break;
       case _MenuAction.editFilter:        
-        alignmentFilter = dialogOnOff('Inställning för filtrering', alignmentFilter, ['good','neutral','bad'], 'Visa lista', 'VISA', 'DÖLJ', 'Välj ett alternativ: ');   
+        alignmentFilter = dialogOnOff('Välj inställning för filtrering', alignmentFilter, ['good','neutral','bad'], 'Visa lista', 'VISA', 'DÖLJ', 'Välj ett alternativ: ');   
         break;
       case _MenuAction.reset: 
         sorting.clear(); sorting.addAll(defaultSorting);
@@ -93,14 +92,10 @@ Future<void> menuOptionListHeroes() async {
 }
 
 
-
-
-
-
-
-
 enum _MenuAction { editSorting, editFilter, reset, addHero, deleteHero, exit }
 
+
+// Tar fram vilka hjältar som ska vara synliga i listan
 List<HeroModel> _filterAndSort(List<HeroModel> heroes, List<String> sorting, List<String> alignmentFilter) {
 
   // gör kopia av lista
@@ -122,21 +117,29 @@ List<HeroModel> _filterAndSort(List<HeroModel> heroes, List<String> sorting, Lis
   return list;
 }
 
+// Skriver ut rad i listan
 void _printHeroList(List<HeroModel> heroes) {
-  for (int i=0; i<heroes.length; i++) {
-    String? s = heroes[i].toDisplayString(number: i+1);
-    print(s);
+  if (heroes.isEmpty) {
+    print('Tom lista');
+  }
+  else {
+    for (int i=0; i<heroes.length; i++) {
+      String? s = heroes[i].toDisplayString(number: i+1);
+      print(s);
+    }
   }
 }
 void _printCurrentSorting(List<String> sorting) {
-  String settings = sorting.join(', ');   // översätt???
+  List<String> translation = translateListToSwedish(sorting);
+  String settings = translation.join(', ');   
   if (settings.isEmpty) settings = '-';
-  print('  Sortering: $settings');
+  print(' Sortering: $settings');
 }
 void _printCurrentFilter(List<String> alignmentFilter) {
-  String settings = alignmentFilter.join(', ');  // översätt???
+  List<String> translation = translateListToSwedish(alignmentFilter);
+  String settings = translation.join(', ');  
   if (settings.isEmpty) settings = '-';
-  print('  Filter, moralisk inriktning: $settings');
+  print(' Filter, moralisk inriktning: $settings');
 }
 
 void _sortByStrength(List<HeroModel> heroes) {

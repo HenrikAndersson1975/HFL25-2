@@ -1,3 +1,5 @@
+import 'package:v04/services/translation_service.dart';
+
 import 'dialogs_helper.dart';
 import 'dialog_menu.dart';
 import 'dart:math';
@@ -24,7 +26,7 @@ List<String> dialogOnOff(String header, List<String> selectedOptions, List<Strin
     List<MenuOption<String>> menuOptions = [];
     for(int i=0; i<options.length; i++) {
       String value = options[i];
-      String translation = value;
+      String translation = translateToSwedish(value);
       menuOptions.add(MenuOption(value, '${list.contains(value) ? optionSelectedText : optionNotSelectedText} $translation'));
     }
 

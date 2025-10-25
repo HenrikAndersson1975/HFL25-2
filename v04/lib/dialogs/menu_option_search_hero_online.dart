@@ -1,6 +1,5 @@
 
 import 'dart:io';
-
 import 'dialog_enter_hero_name.dart';
 import 'dialog_menu.dart';
 import 'dialog_select_hero.dart';
@@ -21,21 +20,20 @@ Future<void> menuOptionSearchHeroOnline() async {
 
     print('--- Sök hjälte ---');
 
+    // Användare anger ett namn
     String? partOfHeroName = dialogEnterHeroName();
  
     if (partOfHeroName == null || partOfHeroName.isEmpty) {
       print('Inget namn angivet.');    
     }
     else {    
+      // Visar resultat av sökning
       List<HeroModel> matchingHeroes = await _getSearchResult(partOfHeroName);
       _showSearchResult(partOfHeroName, matchingHeroes);
 
-      // fråga vad man vill göra med resultatet
-      // fråga om man vill spara hjältarna till lista
-
+      // Frågar användare om hjältar ska sparas
       if (matchingHeroes.isNotEmpty) 
       {
-        
         int menuChoice = dialogMenu<int>(
           '\nHur vill du hantera sökresultatet?',
           [
@@ -46,6 +44,7 @@ Future<void> menuOptionSearchHeroOnline() async {
           'Välj ett alternativ: ',
         );
 
+        // Hantera gjort val i menyn
         switch (menuChoice) {
           case 1: 
             clearScreen();
@@ -60,17 +59,15 @@ Future<void> menuOptionSearchHeroOnline() async {
             break;
         }
       }
-
-
     }
 
     //Frågar användaren om den vill göra en ny sökning eller avsluta
     isRunning = acceptOrDecline('\nVill du göra en ny sökning? (j/n) ', 'j', 'n');
   }
-
 }
 
 
+// Sparar hjältar och visar vilka som sparades
 Future<void> _saveHeroes(List<HeroModel> heroes) async {
   
   clearScreen();
@@ -79,6 +76,7 @@ Future<void> _saveHeroes(List<HeroModel> heroes) async {
 
   HeroDataManaging manager = getHeroDataManager();
 
+  // Försöker spara hjältarna en och en, visar om det gick bra eller dåligt
   for (int i=0; i < heroes.length; i++) {
     HeroModel hero = heroes[i];
 
@@ -95,7 +93,7 @@ Future<void> _saveHeroes(List<HeroModel> heroes) async {
   print('');  
 }
 
-
+// Användare väljer hjältar som ska sparas
 Future<void> _saveSelectedHeroes(List<HeroModel> heroes) async {
   
   List<HeroModel> unselectedHeroes = [];
@@ -117,6 +115,7 @@ Future<void> _saveSelectedHeroes(List<HeroModel> heroes) async {
   }
 }
 
+// Hämtar hjältar från server
 Future<List<HeroModel>> _getSearchResult(String partOfHeroName) async {
 
     HeroNetworkManager manager = getHeroNetworkManager();
@@ -127,6 +126,7 @@ Future<List<HeroModel>> _getSearchResult(String partOfHeroName) async {
     return matchingHeroes;
 }
 
+// Visar resultat av sökning
 void _showSearchResult(String partOfHeroName, List<HeroModel> matchingHeroes) {
     clearScreen();
     print('--- Sök hjälte ---');

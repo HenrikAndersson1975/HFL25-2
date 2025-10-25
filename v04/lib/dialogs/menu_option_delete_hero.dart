@@ -28,7 +28,7 @@ Future<bool> menuOptionDeleteHero(List<HeroModel> heroes) async {
       bool deleted = false;
 
       // Säkerställ att användaren vill ta bort hjälten
-      bool deleteHero = acceptOrDecline('Är du säker på att du vill radera ${selectedHero.name}? (j/n) ', 'j', 'n');
+      bool deleteHero = acceptOrDecline('\nÄr du säker på att du vill radera ${selectedHero.name}? (j/n) ', 'j', 'n');
 
       
       if (deleteHero) {
@@ -45,10 +45,16 @@ Future<bool> menuOptionDeleteHero(List<HeroModel> heroes) async {
         }      
 
         // Visar resultat
-        print(deleted ? 'Hjälte har tagits bort.':'Hjälte kunde inte tas bort.');
+        print(deleted ? '\nHjälte har tagits bort.':'\nHjälte kunde inte tas bort.');
         
-        // Om användaren vill ta bort annan
-        exit = !acceptOrDecline('Vill du radera en annan hjälte? (j/n) ', 'j', 'n');
+        if (remainingHeroes.isNotEmpty) {
+          // Om användaren vill ta bort annan
+          exit = !acceptOrDecline('Vill du radera en annan hjälte? (j/n) ', 'j', 'n');
+        }
+        else {
+          waitForEnter('Det finns inga hjältar kvar. Tryck ENTER för att fortsätta.');
+          exit = true;
+        }
       }
     }
     else {
