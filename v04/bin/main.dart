@@ -16,12 +16,6 @@ import 'package:v04/interfaces/hero_storage_managing.dart';
 void main(List<String> arguments) async {
   
 
-// todo
-
-// man ska kunna ta bort hjälte från lokal lista
-// ska kunna lista god och onda jhjältar var för sig
-
-
   clearScreen();  
 
   // analysera startargument
@@ -63,10 +57,10 @@ Future<void> _runMainMenu() async {
       '=== MENY ===',
       [
         MenuOption(_MainMenuAction.searchHeroOnline, 'Sök hjälte online'),
-        MenuOption(_MainMenuAction.addHero, 'Skapa hjälte och spara i lokal lagring'),
-        MenuOption(_MainMenuAction.listHeroes, 'Visa hjältar i lokal lagring'),
-        MenuOption(_MainMenuAction.searchHero, 'Sök hjälte i lokal lagring'),
-        MenuOption(_MainMenuAction.exit, 'Avsluta'),
+        MenuOption(_MainMenuAction.addHero, 'Skapa hjälte'),
+        MenuOption(_MainMenuAction.listHeroes, 'Hantera hjältar (visa/ny/radera)'),
+        MenuOption(_MainMenuAction.searchHero, 'Sök hjälte'),
+        MenuOption(_MainMenuAction.exit, 'Avsluta program'),
       ],
       'Välj ett alternativ: ',
     );

@@ -1,3 +1,7 @@
+import 'exports_menu_options.dart';
+import 'menu_option_delete_hero.dart';
+
+import 'dialog_onoff.dart';
 import 'dialogs_helper.dart';
 import 'package:v04/models/exports_hero_models.dart';
 import 'package:v04/services/singletons_service.dart';
@@ -10,11 +14,9 @@ import 'dialog_menu.dart';
 /// Visar alla hjältar i listan, sorterade efter styrka (starkaste först)
 Future<void> menuOptionListHeroes() async {
 
-  print('Hämtar lista med hjältar...');
-  
-  // Hämtar listan
-  HeroDataManaging manager = getHeroDataManager();
-  List<HeroModel> heroes = await manager.getHeroes();  
+  bool reloadHeroes = true;
+
+  List<HeroModel> heroes = [];  
 
   // Definierar default-värden för sortering och filtering
   List<String> defaultSorting = []; 
@@ -28,11 +30,18 @@ Future<void> menuOptionListHeroes() async {
   
   while (isRunning)
   {
+    if (reloadHeroes) { 
+      clearScreen();
+      print('Hämtar lista med hjältar...'); 
+      HeroDataManaging manager = getHeroDataManager();    
+      heroes = await manager.getHeroes();   
+      reloadHeroes = false;
+    }
+
     // Tar fram lista enligt gällande inställningar
     List<HeroModel> filteredAndSortedHeroes = _filterAndSort(heroes, sorting, alignmentFilter);
 
     clearScreen();
-
     print('--- Lista över hjältar ---');
 
     // Skriver ut listan
@@ -50,124 +59,47 @@ Future<void> menuOptionListHeroes() async {
       [
         MenuOption(_MenuAction.editSorting, 'Ändra sortering'),
         MenuOption(_MenuAction.editFilter, 'Ändra filtrering'),
-        MenuOption(_MenuAction.reset, 'Återställ sortering och filtrering'),
+        MenuOption(_MenuAction.reset, 'Återställ sortering och filtrering'),      
+        MenuOption(_MenuAction.addHero, 'Lägg till hjälte'),
+        MenuOption(_MenuAction.deleteHero, 'Ta bort hjälte'),
         MenuOption(_MenuAction.exit, 'Tillbaka')
       ], 
       'Välj ett alternativ: ');
 
     switch(action) {
-      case _MenuAction.editSorting: 
-        sorting = _menuOptionEditSorting(sorting);
+      case _MenuAction.editSorting:         
+        sorting = dialogOnOff('Inställning för sortering',  sorting, ['name','strength'], 'Visa lista', 'PÅ', 'AV', 'Välj ett alternativ: ');
         break;
-      case _MenuAction.editFilter: 
-        alignmentFilter = _menuOptionEditFilter(alignmentFilter);
+      case _MenuAction.editFilter:        
+        alignmentFilter = dialogOnOff('Inställning för filtrering', alignmentFilter, ['good','neutral','bad'], 'Visa lista', 'VISA', 'DÖLJ', 'Välj ett alternativ: ');   
         break;
       case _MenuAction.reset: 
         sorting.clear(); sorting.addAll(defaultSorting);
         alignmentFilter.clear(); alignmentFilter.addAll(defaultAlignmentFilter);
         break;
+      case _MenuAction.addHero:
+        bool newHeroCreated = await menuOptionCreateHero();       
+        if (newHeroCreated) { reloadHeroes = true; }
+        break;
+      case _MenuAction.deleteHero:
+        bool heroDeleted = await menuOptionDeleteHero(filteredAndSortedHeroes);
+        if (heroDeleted) { reloadHeroes = true; }
+        break;
       case _MenuAction.exit:
         isRunning = false;
-        break;
-      default:
-        break;
-    }
-  }
-}
-
-List<String> _menuOptionEditSorting(List<String> sorting) {
-  
-  // arbetar med kopia av värden
-  List<String> list = [];
-  list.addAll(sorting);
-
-  bool isRunning = true;
-
-  while(isRunning) {
-
-    clearScreen();
-
-    print('--- Inställning för sortering ---');
-
-    // Visa meny 
-    String action = dialogMenu('', 
-    [
-      MenuOption('name', '${list.contains("name") ? "ON":"OFF"} Namn'),
-      MenuOption('strength', '${list.contains("strength") ? "ON":"OFF"} Styrka'),   
-      MenuOption('exit', '    Tillbaka')
-    ], 
-    'Välj ett alternativ: ');
-
-    switch(action) {
-      case 'name': 
-      case 'strength': 
-        _swap(list, action);
         break;    
-      default:
-        isRunning = false;
-        break;
     }
   }
-  
-  return list;
-}
-List<String> _menuOptionEditFilter(List<String> alignmentFilter) {
-
-  // arbetar med kopia av värden
-  List<String> list = [];
-  list.addAll(alignmentFilter);
-
-  bool isRunning = true;
-
-  while(isRunning) {
-
-    clearScreen();
-
-    print('--- Inställning för filtrering ---');
-
-    // Visa meny 
-    String action = dialogMenu('', 
-    [
-      MenuOption('good', '${list.contains("good") ? "ON":"OFF"} God'),
-      MenuOption('neutral', '${list.contains("neutral") ? "ON":"OFF"} Neutral'), 
-      MenuOption('bad', '${list.contains("bad") ? "ON":"OFF"} Ond'),  
-      MenuOption('exit', '    Tillbaka')
-    ], 
-    'Välj ett alternativ: ');
-
-    switch(action) {
-      case 'good': 
-      case 'neutral': 
-      case 'bad':
-        _swap(list, action);
-        break;    
-      default:
-        isRunning = false;
-        break;
-    }
-  }
-  
-  return list;
-}
-
-void _swap(List<String> list, String element) {
-  if (list.contains(element)) {
-    list.remove(element);
-  }
-  else {
-    list.add(element);
-  }
-}
-
-
-/// Alternativ i meny
-enum _MenuAction {
-  editSorting, editFilter, reset, exit,
-  
 }
 
 
 
+
+
+
+
+
+enum _MenuAction { editSorting, editFilter, reset, addHero, deleteHero, exit }
 
 List<HeroModel> _filterAndSort(List<HeroModel> heroes, List<String> sorting, List<String> alignmentFilter) {
 
@@ -186,7 +118,7 @@ List<HeroModel> _filterAndSort(List<HeroModel> heroes, List<String> sorting, Lis
       case 'strength': _sortByStrength(list); break;
     }
   }
-  
+
   return list;
 }
 
@@ -207,7 +139,6 @@ void _printCurrentFilter(List<String> alignmentFilter) {
   print('  Filter, moralisk inriktning: $settings');
 }
 
-
 void _sortByStrength(List<HeroModel> heroes) {
   heroes.sort((a, b) {
       int strengthA = a.powerstats?.strength ?? 0;
@@ -225,20 +156,3 @@ void _sortByName(List<HeroModel> heroes) {
 List<HeroModel> _filterByAlignment(List<HeroModel> heroes, List<String> selectedAlignmentValues) {
   return heroes.where((h) => selectedAlignmentValues.contains(h.biography?.alignment)).toList();
 }
-
-
-// lägg till sortering
-// lägg till filter
-// ta bort
-
-
-// lägg till submeny
-//  visa alla
-//  lista efter styrka
-//  lista efter namn
-//  lista goda
-//  lista onda
-//  lista neutrala
-
-// .... 
-//  

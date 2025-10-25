@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:v04/managers/hero_file_manager.dart';
-import '../interfaces/hero_data_managing.dart';
+import 'package:v04/interfaces/hero_data_managing.dart';
 import 'package:v04/managers/hero_network_manager.dart';
 import 'package:v04/interfaces/hero_storage_managing.dart';
 

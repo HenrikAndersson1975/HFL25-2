@@ -3,8 +3,6 @@ import 'package:v04/models/exports_hero_models.dart';
 
 HeroModel? dialogSelectHero(String header, List<HeroModel> heroes, String prompt) {
 
-//selectableHeroes.sort((a,b) => a.name.compareTo(b.name));
-
   List<MenuOption<HeroModel?>> menuOptions = [];  
   for (int i=0; i<heroes.length; i++) {
     HeroModel hero = heroes[i];

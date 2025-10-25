@@ -73,6 +73,10 @@ Future<void> menuOptionSearchHeroOnline() async {
 
 Future<void> _saveHeroes(List<HeroModel> heroes) async {
   
+  clearScreen();
+
+  stdout.write('Sparar ${heroes.length==1?'hjälte':'hjältar'}...');
+
   HeroDataManaging manager = getHeroDataManager();
 
   for (int i=0; i < heroes.length; i++) {
@@ -108,17 +112,10 @@ Future<void> _saveSelectedHeroes(List<HeroModel> heroes) async {
     else {
       unselectedHeroes.remove(selectedHero);   
       await _saveHeroes([ selectedHero ]);
-
       print('');
     }
   }
-
-  //return;
 }
-
-
-
-
 
 Future<List<HeroModel>> _getSearchResult(String partOfHeroName) async {
 

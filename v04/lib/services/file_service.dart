@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:async';
 
-
 class FileService {
   // Fil denna service hanterar
   File? _file;
@@ -11,7 +10,7 @@ class FileService {
   late Completer<void> _lockCompleter = Completer<void>();
 
   FileService(String filePath) {
-    _file = File(filePath); // Nu instansieras varje FileService med en filväg
+    _file = File(filePath); 
   }
 
   Future<void> _waitForUnlock() async {
