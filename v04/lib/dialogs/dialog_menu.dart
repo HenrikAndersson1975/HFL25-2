@@ -25,7 +25,9 @@ T dialogMenu<T>(String header, List<MenuOption<T>> menuOptions, String prompt) {
   while (selectedValue == null) {
  
     // Skriver ut rubrik
-    print(header);
+    if (header.isNotEmpty) {
+      print(header);
+    }
 
     // Skriver ut menyalternativen 
     for (int i=0; i<menuOptions.length; i++) {     

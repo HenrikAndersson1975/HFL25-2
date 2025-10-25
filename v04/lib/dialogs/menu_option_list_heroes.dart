@@ -1,33 +1,161 @@
+import 'package:v04/services/translation_service.dart';
+
+import 'exports_menu_options.dart';
+import 'dialog_onoff.dart';
 import 'dialogs_helper.dart';
 import 'package:v04/models/exports_hero_models.dart';
 import 'package:v04/services/singletons_service.dart';
 import 'package:v04/interfaces/hero_data_managing.dart';
+import 'dialog_menu.dart';
 
-/// Visar alla hjältar i listan, sorterade efter styrka (starkaste först)
+
+/// Visar hjältar i lista
 Future<void> menuOptionListHeroes() async {
 
-  clearScreen();
+  bool reloadHeroes = true;
 
-  print('--- Lista över hjältar ---');
+  List<HeroModel> heroes = [];  
 
-  HeroDataManaging manager = getHeroDataManager();
+  // Definierar default-värden för sortering och filtering
+  List<String> defaultSorting = []; 
+  List<String> defaultAlignmentFilter = ["good", "neutral", "bad"];
 
-  // Sorterar listan efter hjältarnas styrka, starkaste först
-  List<HeroModel> heroes = await manager.getHeroes();
+  // Sätter gällande inställning för sortering och filtrering
+  List<String> sorting = []..addAll(defaultSorting);
+  List<String> alignmentFilter = []..addAll(defaultAlignmentFilter);
+  
+  bool isRunning = true;
+  
+  while (isRunning)
+  {
+    if (reloadHeroes) { 
+      clearScreen();
+      print('Hämtar lista med hjältar...'); 
+      HeroDataManaging manager = getHeroDataManager();    
+      heroes = await manager.getHeroes();   
+      reloadHeroes = false;
+    }
+
+    // Tar fram lista enligt gällande inställningar
+    List<HeroModel> filteredAndSortedHeroes = _filterAndSort(heroes, sorting, alignmentFilter);
+
+    clearScreen();
+    print('--- Lista över hjältar ---');
+
+    // Skriver ut listan
+    _printHeroList(filteredAndSortedHeroes);
+
+    //
+    print('\nListan innehåller ${heroes.length} ${heroes.length == 1 ? 'hjälte' : 'hjältar'}, varav ${filteredAndSortedHeroes.length} ${filteredAndSortedHeroes.length == 1 ? 'hjälte' : 'hjältar'} visas med nuvarande filtrering');
+
+    // Skriver ut gällande inställningar för listan
+    _printCurrentFilter(alignmentFilter);
+    _printCurrentSorting(sorting);
+
+    // Visa meny 
+    _MenuAction action = dialogMenu('\nVad vill du göra med listan?', 
+      [
+        MenuOption(_MenuAction.addHero, 'Lägg till hjälte'),
+        MenuOption(_MenuAction.deleteHero, 'Ta bort hjälte'),
+        MenuOption(_MenuAction.editSorting, 'Ändra sortering'),
+        MenuOption(_MenuAction.editFilter, 'Ändra filtrering'),
+        MenuOption(_MenuAction.reset, 'Återställ sortering och filtrering'),             
+        MenuOption(_MenuAction.exit, 'Tillbaka')
+      ], 
+      'Välj ett alternativ: ');
+
+    // Hanterar menyval
+    switch(action) {
+      case _MenuAction.editSorting:           
+        sorting = dialogOnOff('Välj inställning för sortering', sorting, ['name','strength'], 'Visa lista', 'PÅ', 'AV', 'Välj ett alternativ: ');
+        break;
+      case _MenuAction.editFilter:        
+        alignmentFilter = dialogOnOff('Välj inställning för filtrering', alignmentFilter, ['good','neutral','bad'], 'Visa lista', 'VISA', 'DÖLJ', 'Välj ett alternativ: ');   
+        break;
+      case _MenuAction.reset: 
+        sorting.clear(); sorting.addAll(defaultSorting);
+        alignmentFilter.clear(); alignmentFilter.addAll(defaultAlignmentFilter);
+        break;
+      case _MenuAction.addHero:
+        bool newHeroCreated = await menuOptionCreateHero();       
+        if (newHeroCreated) { reloadHeroes = true; }
+        break;
+      case _MenuAction.deleteHero:
+        bool heroDeleted = await menuOptionDeleteHero(filteredAndSortedHeroes);
+        if (heroDeleted) { reloadHeroes = true; }
+        break;
+      case _MenuAction.exit:
+        isRunning = false;
+        break;    
+    }
+  }
+}
+
+
+enum _MenuAction { editSorting, editFilter, reset, addHero, deleteHero, exit }
+
+
+// Tar fram vilka hjältar som ska vara synliga i listan
+List<HeroModel> _filterAndSort(List<HeroModel> heroes, List<String> sorting, List<String> alignmentFilter) {
+
+  // gör kopia av lista
+  List<HeroModel> list = [];
+  list.addAll(heroes);
+
+  // filtrera
+  list = _filterByAlignment(list, alignmentFilter);
+
+  // sortera
+  for (int i=0; i<sorting.length; i++) {
+    String sortType = sorting[i];
+    switch (sortType) {
+      case 'name': _sortByName(list); break;
+      case 'strength': _sortByStrength(list); break;
+    }
+  }
+
+  return list;
+}
+
+// Skriver ut rad i listan
+void _printHeroList(List<HeroModel> heroes) {
+  if (heroes.isEmpty) {
+    print('Tom lista');
+  }
+  else {
+    for (int i=0; i<heroes.length; i++) {
+      String? s = heroes[i].toDisplayString(number: i+1);
+      print(s);
+    }
+  }
+}
+void _printCurrentSorting(List<String> sorting) {
+  List<String> translation = translateListToSwedish(sorting);
+  String settings = translation.join(', ');   
+  if (settings.isEmpty) settings = '-';
+  print(' Sortering: $settings');
+}
+void _printCurrentFilter(List<String> alignmentFilter) {
+  List<String> translation = translateListToSwedish(alignmentFilter);
+  String settings = translation.join(', ');  
+  if (settings.isEmpty) settings = '-';
+  print(' Filter, moralisk inriktning: $settings');
+}
+
+void _sortByStrength(List<HeroModel> heroes) {
   heroes.sort((a, b) {
       int strengthA = a.powerstats?.strength ?? 0;
       int strengthB = b.powerstats?.strength ?? 0;
       return strengthB.compareTo(strengthA); // Sortera i fallande ordning
     });
-
-  print('Listan innehåller ${heroes.length} ${heroes.length == 1 ? 'hjälte' : 'hjältar'}.');
-
-  // Skriver ut alla hjältar i listan  
-  for (int i=0; i<heroes.length; i++) {
-    String? s = heroes[i].toDisplayString(number: i+1);
-          print(s);
-  }
-
-  // Pausar tills användaren trycker Enter
-  waitForEnter("\nTryck ENTER för att återgå till meny.");
+}
+void _sortByName(List<HeroModel> heroes) {
+  heroes.sort((a, b) {
+      String nameA = a.name ?? '';
+      String nameB = b.name ?? '';
+      return nameA.compareTo(nameB); 
+    });
+}
+List<HeroModel> _filterByAlignment(List<HeroModel> heroes, List<String> selectedAlignmentValues) {
+  return heroes.where((h) => selectedAlignmentValues.contains(h.biography?.alignment)).toList();
 }

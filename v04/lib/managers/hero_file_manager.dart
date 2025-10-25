@@ -17,32 +17,48 @@ class HeroFileManager implements HeroStorageManaging {
   // Privat konstruktor
   HeroFileManager._(this._fileService);
 
+
+  @override
+  Future<bool> upsertHeroes(List<HeroModel> heroes) async {
+
+    bool success = false;
+
+    if (heroes.isNotEmpty)
+    {
+        int upsertCount = 0;
+
+        // Laddar listan
+        List<HeroModel> list = await _readHeroList();
+    
+        for(int i=0; i<heroes.length; i++) {
+          
+          HeroModel hero = heroes[i];
+          if (hero.id != null) {
+            // Tar bort om det finns hjälte med id
+            list.removeWhere((h) => h.id == hero.id);
+
+            // Lägger till hjälte till lista
+            list.add(hero);   
+
+            upsertCount++;      
+          }
+        }
+
+        if (upsertCount > 0) {
+          // Skriver listan till fil
+           success = await _writeHeroList(list);         
+        }       
+    }
+
+    return success;
+  }
+
   @override
   Future<bool> upsertHero(HeroModel hero) async {
-
-    // Vill egentligen bara lägga till en hjälte till storage.
-    // Men eftersom en fil används för att lagra alla hjältar, måste hela filen skrivas om.
-    // Alternativt hade man kunnat ha en hjälte per fil.
-
-    if (hero.id?.isEmpty ?? true)
-    {
-      throw Exception('Hjälte saknar id.');    
-    }
-    else {         
-      // Laddar listan
-      List<HeroModel> heroes = await _readHeroList();
-
-      // Tar bort om det finns hjälte med id
-      heroes.removeWhere((h) => h.id == hero.id);
-
-      // Lägger till hjälte till lista
-      heroes.add(hero);
-
-      // Skriver listan till fil
-      bool success = await _writeHeroList(heroes);
-      return success; 
-    }
+    return upsertHeroes([hero]);
   }
+
+
 
   @override
   Future<bool> deleteHero(String heroId) async {
@@ -78,10 +94,10 @@ class HeroFileManager implements HeroStorageManaging {
   // Funktion för att skriva hjältelista till fil
   Future<bool> _writeHeroList(List<HeroModel> heroes) async {
     try {  
-      String jsonString = jsonEncode(heroes.map((hero) => hero.toJson()).toList());     
+      String jsonString = jsonEncode(heroes.map((hero) => hero.toJson()).toList());  
       return await _fileService.write(jsonString);  
     } catch (e) {
-      print('Fel vid skrivning av hjälte lista: $e');
+      print('Fel vid skrivning av hjältelista: $e');
       return false;
     }
   }

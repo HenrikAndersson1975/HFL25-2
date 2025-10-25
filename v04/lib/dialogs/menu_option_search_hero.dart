@@ -4,7 +4,7 @@ import 'package:v04/services/singletons_service.dart';
 import 'package:v04/interfaces/hero_data_managing.dart';
 import 'package:v04/dialogs/dialog_enter_hero_name.dart';
 
-/// 
+/// Söker hjälte i lokal lista
 Future<void> menuOptionSearchHero() async {
 
   bool isRunning = true;
@@ -14,8 +14,7 @@ Future<void> menuOptionSearchHero() async {
     clearScreen();
     print('--- Sök hjälte ---');
 
-
-
+    // Användare anger ett namn
     String? partOfHeroName = dialogEnterHeroName();
 
     if (partOfHeroName == null || partOfHeroName.isEmpty) {
@@ -33,8 +32,7 @@ Future<void> menuOptionSearchHero() async {
 
 
 Future<List<HeroModel>> _getSearchResult(String partOfHeroName) async {
-    HeroDataManaging manager = getHeroDataManager();
-    
+    HeroDataManaging manager = getHeroDataManager();   
     List<HeroModel> matchingHeroes = await manager.findHeroesByName(partOfHeroName, false);
     return matchingHeroes;
 }

@@ -1,7 +1,7 @@
 import 'package:v04/interfaces/hero_storage_managing.dart';
 import 'package:v04/services/unique_id_service.dart';
-import '../interfaces/hero_data_managing.dart';
-import '../models/hero_model.dart';
+import 'package:v04/interfaces/hero_data_managing.dart';
+import 'package:v04/models/hero_model.dart';
 import 'dart:io';
 
 class HeroDataManager implements HeroDataManaging
@@ -40,7 +40,7 @@ class HeroDataManager implements HeroDataManaging
  
       if (!exists) {    
         _heroList.add(hero);  // spara till lista
-        _storage?.upsertHero(hero);  // spara till storage
+        await _storage?.upsertHero(hero);  // spara till storage
         return true;
       }
       else {

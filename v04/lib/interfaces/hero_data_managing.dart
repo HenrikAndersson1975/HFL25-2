@@ -1,4 +1,4 @@
-import '../models/exports_hero_models.dart';
+import 'package:v04/models/exports_hero_models.dart';
 
 abstract class HeroDataManaging
 {  
