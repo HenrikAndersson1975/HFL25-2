@@ -17,7 +17,6 @@ class HeroFileManager implements HeroStorageManaging {
   // Privat konstruktor
   HeroFileManager._(this._fileService);
 
-
   @override
   Future<bool> upsertHeroes(List<HeroModel> heroes) async {
 
@@ -34,6 +33,7 @@ class HeroFileManager implements HeroStorageManaging {
           
           HeroModel hero = heroes[i];
           if (hero.id != null) {
+            
             // Tar bort om det finns hjälte med id
             list.removeWhere((h) => h.id == hero.id);
 
@@ -58,15 +58,13 @@ class HeroFileManager implements HeroStorageManaging {
     return upsertHeroes([hero]);
   }
 
-
-
   @override
   Future<bool> deleteHero(String heroId) async {
 
     // Laddar listan
     List<HeroModel> heroes = await _readHeroList();
 
-    // Antal hjältar för borttagningsförsök
+    // Antal hjältar före borttagningsförsök
     int count = heroes.length;
 
     // Tar bort om det finns hjälte med id

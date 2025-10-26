@@ -30,7 +30,6 @@ Future<bool> menuOptionCreateHero() async {
     
     print('');
     waitForEnter('Tryck ENTER för att fortsätta');
-
   }
 
   return success;

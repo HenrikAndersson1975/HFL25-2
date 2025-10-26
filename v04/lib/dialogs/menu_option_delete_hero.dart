@@ -47,13 +47,12 @@ Future<bool> menuOptionDeleteHero(List<HeroModel> heroes) async {
         // Visar resultat
         print(deleted ? '\nHjälte har tagits bort.':'\nHjälte kunde inte tas bort.');
         
-        if (remainingHeroes.isNotEmpty) {
-          // Om användaren vill ta bort annan
-          exit = !acceptOrDecline('Vill du radera en annan hjälte? (j/n) ', 'j', 'n');
+        if (remainingHeroes.isEmpty) {
+          waitForEnter('Det finns inga hjältar kvar. Tryck ENTER för att fortsätta.');
+          exit = true;       
         }
         else {
-          waitForEnter('Det finns inga hjältar kvar. Tryck ENTER för att fortsätta.');
-          exit = true;
+          waitForEnter('Tryck ENTER för att fortsätta.');
         }
       }
     }
