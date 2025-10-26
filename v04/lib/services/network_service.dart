@@ -17,7 +17,7 @@ class NetworkService {
     if (response.statusCode == 200) {
       return response.body;  
     } else {
-      throw Exception('Kunde inte ladda data');
+      throw Exception('Error: ${response.statusCode}');     
     }
   }
 }

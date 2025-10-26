@@ -83,8 +83,22 @@ class HeroModel {
       'neutral': 'neutral'
     });
 
-    if (number != null) { s+='$number. ';}
-    s+= 'Namn: $name, Kön: $gender, Styrka: $strength, Moralisk inriktning: $alignment';
+    int numberValueLength = 3;
+    int nameValueLength = 25;
+    int genderValueLength = 7;
+    int strengthValueLength = 5;
+    int alignmentValueLength = 7; 
+
+    
+    if (number != null) {
+      s += '${number.toString().padLeft(numberValueLength)}. ';
+    }
+    
+    s += 'Namn: ${name.padRight(nameValueLength)}';
+    s += 'Kön: ${gender.padRight(genderValueLength)}';
+    s += 'Styrka: ${strength.toString().padRight(strengthValueLength)}';
+    s += 'Moralisk inriktning: ${alignment.padRight(alignmentValueLength)}';
+
     return s;
   }
 

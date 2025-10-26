@@ -12,6 +12,7 @@ class HeroDataManager implements HeroDataManaging
   // Privat konstruktor
   HeroDataManager._privateConstructor();
 
+  final List<HeroModel> _heroList = []; // lista i minnet ... borde kanske inte ha den alls om _storage finns
   HeroStorageManaging? _storage; // kommer sättas via factory
 
   // Factory-konstruktor som alltid returnerar samma instans
@@ -22,11 +23,11 @@ class HeroDataManager implements HeroDataManaging
     return _instance;
   }
 
-  final List<HeroModel> _heroList = [];
-
-  
   @override
   Future<bool> addHero(HeroModel hero) async {
+
+    bool updated = false; // Om det gick att spara till lokal lista
+
     try {
 
       // Om id är null, har användare skapat ny hjälte. Tilldela ett unikt id.
@@ -39,36 +40,58 @@ class HeroDataManager implements HeroDataManaging
       bool exists = list.any((h) => h.id == hero.id);
  
       if (!exists) {    
-        _heroList.add(hero);  // spara till lista
-        await _storage?.upsertHero(hero);  // spara till storage
-        return true;
+
+        updated = true;
+
+        // Lokal lista
+        _heroList.add(hero); // spara till lista
+
+        // Databas
+        if (_storage != null) {
+          bool storageUpdated = await _storage!.upsertHero(hero);  // spara till storage
+          if (!storageUpdated) { 
+            throw Exception('Varning ändring har inte sparats till databas.');
+          }
+        }  
       }
       else {
         throw Exception('Det finns hjälte med samma id.');
       }
-
     } catch (e) {
-      stdout.write(e);
-      return false;
-    }   
-   
+      stdout.write(e);      
+    }    
+
+    return updated;
   }
 
 
   @override
   Future<bool> deleteHero(String heroId) async {
     
-    List<HeroModel> list = await getHeroes();
-    int count = list.length;
+    bool updated = false; // Om det har tagits bort från lokal lista
 
-    list.removeWhere((h) => h.id == heroId);
-    bool anyDeleted = list.length != count;
+    try {
 
-    if (anyDeleted) {
-      await _storage?.deleteHero(heroId);
+      List<HeroModel> list = await getHeroes();
+      int count = list.length;
+
+      // Lokal lista
+      list.removeWhere((h) => h.id == heroId);
+      updated = list.length != count;
+
+      // Databas
+      if (updated && _storage != null) {
+        bool storageUpdated = await _storage!.deleteHero(heroId);
+        if (!storageUpdated) {
+          throw Exception('Varning ändring har inte sparats till databas.');
+        }
+      }
     }
-      
-    return anyDeleted;
+    catch (e) {
+      stdout.write(e);      
+    }
+
+    return updated;
   }
 
 
