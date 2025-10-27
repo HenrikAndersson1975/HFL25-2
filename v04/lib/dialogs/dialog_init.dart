@@ -7,7 +7,7 @@ Future<void> dialogInit() async {
 
   clearScreen();
 
-  HeroDataManaging manager = getHeroDataManager();
+  HeroDataManaging manager = getManager<HeroDataManaging>();
   
   // Ladda hjältar från storage till hjältelistan 
   print('Läser in hjältar...');

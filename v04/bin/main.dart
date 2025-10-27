@@ -1,16 +1,13 @@
-
-
-import 'package:v04/dialogs/exports_dialogs.dart'; 
-import 'package:v04/dialogs/exports_menu_options.dart';
+import 'package:v04/interfaces/hero_data_managing.dart';
+import 'package:v04/interfaces/hero_network_managing.dart';
+import 'package:v04/interfaces/hero_storage_managing.dart';
 import 'package:v04/managers/hero_data_manager.dart';
 import 'package:v04/managers/hero_file_manager.dart';
-import 'package:v04/services/singletons_service.dart';
-
-import '../test/mocks/mock_hero_data_manager.dart';
-
 import 'package:v04/managers/hero_network_manager.dart';
-
-import 'package:v04/interfaces/hero_storage_managing.dart';
+import 'package:v04/services/singletons_service.dart';
+import 'package:v04/dialogs/exports_menu_options.dart';
+import 'package:v04/dialogs/exports_dialogs.dart'; 
+import '../test/mocks/mock_hero_data_manager.dart';
 
 
 void main(List<String> arguments) async {
@@ -108,8 +105,9 @@ void _registerManagers(StorageType storageType, String? filePath) {
       case StorageType.test:   
         print('Programmet startar i testläge. En testlista med hjältar kommer att laddas.');
         print(''); 
-        waitForEnter('Tryck ENTER för att starta.');     
-        registerHeroDataManager(MockHeroDataManager());   
+        waitForEnter('Tryck ENTER för att starta.');  
+        HeroDataManaging manager = MockHeroDataManager();
+        registerManager(manager);   
         break;
       
       // om man vill använda fil för att läsa och skriva hjältar till
@@ -119,7 +117,8 @@ void _registerManagers(StorageType storageType, String? filePath) {
         filePath ??= 'heroes.json';
 
         HeroStorageManaging storage = HeroFileManager(filePath);
-        registerHeroDataManager(HeroDataManager(storage: storage));  
+        HeroDataManaging manager = HeroDataManager(storage: storage);
+        registerManager(manager);  
         break;
    
       default:  
@@ -128,12 +127,16 @@ void _registerManagers(StorageType storageType, String? filePath) {
         print('Om du vill använda en fil för att lagra hjältar starta programmet med argumentet -f.');
         print('');
   
-        waitForEnter('Tryck ENTER för att starta.');       
-        registerHeroDataManager(HeroDataManager()); 
+        waitForEnter('Tryck ENTER för att starta.');  
+        HeroDataManaging manager = HeroDataManager();
+        registerManager(manager); 
         break;     
     } 
 
-    registerHeroNetworkManager(HeroNetworkManager());
+    {
+      HeroNetworkManaging manager = HeroNetworkManager();
+      registerManager(manager);
+    }
 }
 
 

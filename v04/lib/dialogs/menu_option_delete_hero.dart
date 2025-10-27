@@ -35,7 +35,7 @@ Future<bool> menuOptionDeleteHero(List<HeroModel> heroes) async {
 
         // Försöker rader hjälte
         if (selectedHero.id != null) {          
-          HeroDataManaging manager = getHeroDataManager();
+          HeroDataManaging manager = getManager<HeroDataManaging>();
           deleted = await manager.deleteHero(selectedHero.id!);
 
           if (deleted) {
