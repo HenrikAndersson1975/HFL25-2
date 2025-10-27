@@ -31,7 +31,7 @@ Future<void> menuOptionListHeroes() async {
     if (reloadHeroes) { 
       clearScreen();
       print('Hämtar lista med hjältar...'); 
-      HeroDataManaging manager = getHeroDataManager();    
+      HeroDataManaging manager = getManager<HeroDataManaging>();    
       heroes = await manager.getHeroes();   
       reloadHeroes = false;
     }

@@ -1,6 +1,7 @@
 # v04 #
 
 
+
 ## START ##
 För att köra programmet från projektmappen v04 skriv något av dessa tre alternativ: 
 
@@ -97,3 +98,26 @@ Lista med matchningar visas.
 
 ### HUVUDMENY > 5. Avsluta ###
 Du får fråga om du vill avsluta programmet.
+
+
+----------------------------------------------------------------------------------------------------
+
+
+## PROGRAMSTRUKTUR ##
+
+
+### lib/dialogs ###
+Innehåller metoder där användaren interagerar med programmet.
+Första nivån är menu_option_* som sedan använder dialog_* för att hämta information från användaren.
+
+### lib/interfaces ###
+Abstrakta klasser.
+
+### lib/managers ###
+Hanterar hjältar i lokal lista, i fil, online.
+
+### lib/models ###
+Klasser som representerar hjälte och hjältes egenskaper.
+
+### lib/services ###
+Lite mer allmäna tjänster.

@@ -1,34 +1,73 @@
 
 import 'package:v04/models/exports_hero_models.dart';
 import 'mocks/mock_hero_data_manager.dart';
+import 'mocks/mock_hero_network_manager.dart';
+//import 'package:v04/managers/hero_network_manager.dart';
 
 Future<void> main() async {
-  final manager = MockHeroDataManager();
 
-  print("\nLägg till ny hjälte:");
-  await manager.addHero(HeroModel(
-    name: "Phantom Blaze",
-    powerstats: Powerstats(intelligence: 70),
-    biography: Biography(fullName: "Finn Phantom"),
-    appearance: Appearance(gender: "man"),
-  ));
 
-  print("\nSkapa hjälte från json:");
-  HeroModel theJsonHero = HeroModel.fromJson(_jsonHero);
+  // data
+  {
+    final manager = MockHeroDataManager();
 
-  print("\nLägg till json-hjälten:");
-  await manager.addHero(theJsonHero);
+    
+    print("\nLägg till ny hjälte:");
+    await manager.addHero(HeroModel(
+      name: "Phantom Blaze",
+      powerstats: Powerstats(intelligence: 70),
+      biography: Biography(fullName: "Finn Phantom"),
+      appearance: Appearance(gender: "Male"),
+    ));
 
-  print("\nLista alla hjältar:");
-  for (var hero in await manager.getHeroes()) {
-    print(hero.toDisplayString());
+    print("\nSkapa hjälte från json:");
+    HeroModel theJsonHero = HeroModel.fromJson(_jsonHero);
+
+    print("\nLägg till json-hjälten:");
+    await manager.addHero(theJsonHero);
+
+    print("\nLista alla hjältar:");
+    for (var hero in await manager.getHeroes()) {
+      print(hero.toDisplayString());
+    }
+
+    print("\nSök efter hjältar med 'a' i namnet:");
+    final results = await manager.findHeroesByName("a", false);
+    for (var hero in results) {
+      print(hero.toDisplayString());
+    }
   }
+  
 
-  print("\nSök efter hjältar med 'a' i namnet:");
-  final results = await manager.findHeroesByName("a", false);
-  for (var hero in results) {
-    print(hero.toDisplayString());
+  // network mock
+  {
+    final manager = MockHeroNetworkManager();
+
+    print("\nSök efter hjältar med 'b' i namnet:");
+    final (success, results) = await manager.findHeroesByName("b");
+    if (success) {
+    for (var hero in results) {
+      print(hero.toDisplayString());
+    }}
+    else {
+      print('Gick inte!');
+    }
   }
+  
+  // network 
+  /*{
+    final manager = HeroNetworkManager();
+
+    print("\nSök efter hjältar med 'b' i namnet:");
+    final (success, results) = await manager.findHeroesByName("b");
+    if (success) {
+    for (var hero in results) {
+      print(hero.toDisplayString());
+    }}
+    else {
+      print('Gick inte!');
+    }
+  }*/
 }
 
 Map<String,dynamic> _jsonHero = {

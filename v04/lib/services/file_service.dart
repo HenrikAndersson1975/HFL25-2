@@ -6,33 +6,36 @@ class FileService {
   File? _file;
 
   // För att kunna låsa fil
-  bool _isLocked = false;
-  late Completer<void> _lockCompleter = Completer<void>();
+  bool _isLocked = false;  // anger om filen är låst 
+  late Completer<void> _lockCompleter = Completer<void>();  // gör att man kan vänta på att en filoperation ska vara klar innan vi låser eller låser upp filen
 
   FileService(String filePath) {
     _file = File(filePath); 
   }
 
   Future<void> _waitForUnlock() async {
+
+    // Om filen är låst, väntar på att _lockCompleter.future ska bli färdig, och fortsätter sedan exekvering
     if (_isLocked) {
       await _lockCompleter.future;
     }
   }
 
   Future<void> _lockFile() async {
-    await _waitForUnlock();
-    _isLocked = true;
-    _lockCompleter = Completer<void>();
+    await _waitForUnlock(); // väntar till fil är olåst
+    _isLocked = true; // anger att filen är låst
+    _lockCompleter = Completer<void>(); // initierar completer för att kunna vänta på upplåsning vid en framtida tidpunkt
   }
 
   void _unlockFile() {
-    _isLocked = false;
-    _lockCompleter.complete();
+    _isLocked = false; // anger att fil är olåst
+    _lockCompleter.complete(); // signalerar att filen är upplåst och exekvering kan fortsätta vid await _lockCompleter.future i _waitForUnlock();
   }
 
   Future<bool> write(String content) async {
     bool result;
 
+    // Vänta tills fil är olåst och lås den sedan
     await _lockFile();
 
     try {
@@ -45,6 +48,7 @@ class FileService {
       print('Fel vid skrivning till fil: $e');
       result = false;
     } finally {
+      // Avslutar alltid med att låsa upp filen
       _unlockFile();
     }
 
@@ -54,6 +58,7 @@ class FileService {
   Future<String> read() async {
     String result;
 
+    // Vänta tills fil är olåst och lås den sedan
     await _lockFile();
 
     try {
@@ -66,6 +71,7 @@ class FileService {
       print('Fel vid läsning från fil: $e');
       result = '';
     } finally {
+      // Avslutar alltid med att låsa upp filen
       _unlockFile();
     }
 

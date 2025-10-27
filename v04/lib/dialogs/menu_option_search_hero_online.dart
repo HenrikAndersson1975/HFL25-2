@@ -4,10 +4,10 @@ import 'dialog_enter_hero_name.dart';
 import 'dialog_menu.dart';
 import 'dialog_select_hero.dart';
 import 'package:v04/interfaces/hero_data_managing.dart';
-import 'package:v04/managers/hero_network_manager.dart';
 import 'package:v04/models/exports_hero_models.dart';
 import 'package:v04/services/singletons_service.dart';
 import 'dialogs_helper.dart';
+import 'package:v04/interfaces/hero_network_managing.dart';
 
 
 Future<void> menuOptionSearchHeroOnline() async {
@@ -27,9 +27,19 @@ Future<void> menuOptionSearchHeroOnline() async {
       print('Inget namn angivet.');    
     }
     else {    
-      // Visar resultat av sökning
-      List<HeroModel> matchingHeroes = await _getSearchResult(partOfHeroName);
-      _showSearchResult(partOfHeroName, matchingHeroes);
+      List<HeroModel> matchingHeroes = [];
+
+      // Kommunicerar med server
+      try {
+        matchingHeroes = await _getSearchResult(partOfHeroName);
+        _showSearchResult(partOfHeroName, matchingHeroes);
+      }
+
+      // Om fel i kommunikation, visas meddelande
+      catch (e) {
+        print(e);
+        waitForEnter('Tryck ENTER för att fortsätta');
+      }
 
       // Frågar användare om hjältar ska sparas
       if (matchingHeroes.isNotEmpty) 
@@ -74,7 +84,7 @@ Future<void> _saveHeroes(List<HeroModel> heroes) async {
 
   stdout.write('Sparar ${heroes.length==1?'hjälte':'hjältar'}...');
 
-  HeroDataManaging manager = getHeroDataManager();
+  HeroDataManaging manager = getManager<HeroDataManaging>();
 
   // Försöker spara hjältarna en och en, visar om det gick bra eller dåligt
   for (int i=0; i < heroes.length; i++) {
@@ -118,7 +128,7 @@ Future<void> _saveSelectedHeroes(List<HeroModel> heroes) async {
 // Hämtar hjältar från server
 Future<List<HeroModel>> _getSearchResult(String partOfHeroName) async {
 
-    HeroNetworkManager manager = getHeroNetworkManager();
+    HeroNetworkManaging manager = getManager<HeroNetworkManaging>();
 
     print('\nHämtar hjältar från server...');
     var (success, matchingHeroes) = await manager.findHeroesByName(partOfHeroName);

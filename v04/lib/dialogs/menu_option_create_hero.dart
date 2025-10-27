@@ -20,7 +20,7 @@ Future<bool> menuOptionCreateHero() async {
     print('Hjälte sparas...');
     try {
       // Försök att lägga till hjälten till listan
-      HeroDataManaging manager = getHeroDataManager();
+      HeroDataManaging manager = getManager<HeroDataManaging>();
       success = await manager.addHero(hero);
       print('OK.');
     }
