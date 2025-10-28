@@ -1,18 +1,17 @@
 # v04 #
 
 
-
 ## START ##
 För att köra programmet från projektmappen v04 skriv något av dessa tre alternativ: 
 
-dart run bin/main.dart. 
-Utan argument kommer programmet inte arbeta med lagring som kan läsas in vid annan körning.
+dart run bin/main.dart
+Utan argument kommer programmet att fråga om man vill använda en fil för att lagra hjältar till annan körning.
 
 dart run bin/main.dart -f 
-För att ange ett filnamn när programmet har startat som ska användas för att läsa/skriva hjältelista.
+Programmet frågar vilken fil man vill använda för att lagra hjältelista. Filnamn kan anges som argument efter -f, i så fall föreslås den. 
 
 dart run bin/main.dart -t 
-För att starta med fördefinierad hjältelista, använder mock som manager. 
+Startar med fördefinierad hjältelista, använder mock som manager. 
 Programmet kommer inte arbeta med lagring som kan läsas in vid annan körning.
 
 ----------------------------------------------------------------------------------------------------
@@ -72,7 +71,7 @@ Lista med hjälte visas enligt den sortering och den filtrering som är vald.
    Välj enligt vilka egenskaper sortering i listan ska ske.
    Genom att välja i menyn kan man ange AV/PÅ.
    Sortering kommer att göras enligt värden på de egenskaper som är angivna PÅ.
-   Om flera är PÅ kommer sortering göras enligt den ordning som man valt att sätta dem till PÅ.
+   Om flera är PÅ kommer sortering göras enligt den ordning som man valt att sätta dem till PÅ. Alltså har sist valda högst prioritet.
    Ange alternativ för 'Visa lista' för att återgå till listan.
 
    ##### 3.4 Ändra filtrering #####

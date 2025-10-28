@@ -65,7 +65,6 @@ Future<void> menuOptionSearchHeroOnline() async {
             await _saveSelectedHeroes(matchingHeroes);
             break;
           case 3: 
-
             break;
         }
       }

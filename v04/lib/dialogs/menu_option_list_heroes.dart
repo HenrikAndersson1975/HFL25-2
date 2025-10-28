@@ -21,8 +21,8 @@ Future<void> menuOptionListHeroes() async {
   List<String> defaultAlignmentFilter = ["good", "neutral", "bad"];
 
   // Sätter gällande inställning för sortering och filtrering
-  List<String> sorting = []..addAll(defaultSorting);
-  List<String> alignmentFilter = []..addAll(defaultAlignmentFilter);
+  List<String> sorting = [...defaultSorting];
+  List<String> alignmentFilter = [...defaultAlignmentFilter];
   
   bool isRunning = true;
   
@@ -90,7 +90,6 @@ Future<void> menuOptionListHeroes() async {
     }
   }
 }
-
 
 enum _MenuAction { editSorting, editFilter, reset, addHero, deleteHero, exit }
 
