@@ -1,12 +1,13 @@
 import 'package:v04/services/translation_service.dart';
-
-import 'exports_menu_options.dart';
 import 'dialog_onoff.dart';
 import 'dialogs_helper.dart';
 import 'package:v04/models/exports_hero_models.dart';
 import 'package:v04/services/singletons_service.dart';
 import 'package:v04/interfaces/hero_data_managing.dart';
 import 'dialog_menu.dart';
+import 'menu_option_create_hero.dart';
+import 'menu_option_delete_hero.dart';
+
 
 
 /// Visar hjältar i lista

@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'package:v04/dialogs/exports_dialogs.dart';
 import 'package:v04/models/exports_hero_models.dart';
 import 'package:v04/interfaces/hero_data_managing.dart';
 import 'package:v04/services/singletons_service.dart';
+import 'dialog_onoff.dart';
+import 'dialogs_helper.dart';
 
 Future<bool> menuOptionDeleteHero(List<HeroModel> heroes) async {
 
