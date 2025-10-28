@@ -1,15 +1,20 @@
+import 'package:v04/services/singletons_service.dart';
 import 'package:v04/interfaces/hero_data_managing.dart';
 import 'package:v04/interfaces/hero_network_managing.dart';
 import 'package:v04/interfaces/hero_storage_managing.dart';
 import 'package:v04/managers/hero_data_manager.dart';
 import 'package:v04/managers/hero_file_manager.dart';
 import 'package:v04/managers/hero_network_manager.dart';
-import 'package:v04/services/singletons_service.dart';
-import 'package:v04/dialogs/exports_menu_options.dart';
-import 'package:v04/dialogs/exports_dialogs.dart'; 
-import '../test/mocks/mock_hero_data_manager.dart';
+import 'package:v04/dialogs/menu_option_create_hero.dart';
+import 'package:v04/dialogs/menu_option_list_heroes.dart';
+import 'package:v04/dialogs/menu_option_search_hero.dart';
+import 'package:v04/dialogs/menu_option_search_hero_online.dart';
+import 'package:v04/dialogs/menu_option_exit.dart';
+import 'package:v04/dialogs/dialogs_helper.dart';
+import 'package:v04/dialogs/dialog_menu.dart';
+import 'package:v04/dialogs/dialog_file_path.dart';
 import 'package:v04/models/hero_model.dart';
-
+import '../test/mocks/mock_hero_data_manager.dart';
 
 void main(List<String> arguments) async {
   

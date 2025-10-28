@@ -20,7 +20,7 @@ Programmet kommer inte arbeta med lagring som kan läsas in vid annan körning.
 1. Sök hjälte online
 2. Skapa hjälte
 3. Hantera hjätar (visa/ny/radera)
-4. Sök hjäte
+4. Sök hjälte
 5. Avslut
 
 ----------------------------------------------------------------------------------------------------
@@ -31,9 +31,11 @@ Inmatning matchas mot namn på hjältar på superheroapi.com.
 Lista med matchningar visas.
 
   #### 1. Undermeny ####
-  1. Spara alla hjältar
-  2. Välj vilka hjältar som ska sparas
-  3. Gör ingenting
+  Lista med hittade hjältar.
+  På varje rad med hjälte kan man växla mellan Ja/Nej. Hjältar på de rader som har Ja kommer att sparas.
+  v, växlar alla Ja till Nej och alla Nej till Ja.
+  s, Sparar de hjältar som har Ja
+  x, Återgår till lista 
 
   ##### 1.1 Spara alla hjältar #####
   Alla hittade hjältar sparas till lista.
@@ -64,6 +66,13 @@ Lista med hjälte visas enligt den sortering och den filtrering som är vald.
    Fyll i egenskaper för hjälte. Hjälte sparas till lista.
 
    ##### 3.2 Ta bort hjälte #####
+   Lista med hjältar.
+   På varje rad med hjälte kan man växla mellan Ja/Nej. Hjältar på rader som har Ja kommer att tas bort.
+   v, växlar alla Ja till Nej och alla Nej till Ja.
+   s, Sparar de hjältar som har Ja
+   x, Återgår till lista 
+
+
    Användare kan ta bort hjälte från listan.
    Man väljer dem en och en tills listan är tom eller man väljer "Avbryt".
 

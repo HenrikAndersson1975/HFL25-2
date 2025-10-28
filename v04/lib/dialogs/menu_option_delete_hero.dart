@@ -1,67 +1,57 @@
-import 'package:v04/dialogs/dialog_select_hero.dart';
-import 'dialogs_helper.dart';
+import 'dart:io';
 import 'package:v04/models/exports_hero_models.dart';
-import 'package:v04/services/singletons_service.dart';
 import 'package:v04/interfaces/hero_data_managing.dart';
+import 'package:v04/services/singletons_service.dart';
+import 'dialog_onoff.dart';
+import 'dialogs_helper.dart';
 
 Future<bool> menuOptionDeleteHero(List<HeroModel> heroes) async {
 
   int deletedCount = 0;
 
-  List<HeroModel> remainingHeroes = [];
-  remainingHeroes.addAll(heroes);
+  List<DialogOnOffMenuOption<HeroModel>> options = [];
+  for (int i=0; i<heroes.length; i++) {
+    DialogOnOffMenuOption<HeroModel> option = DialogOnOffMenuOption(heroes[i], heroes[i].name ?? "", false, DialogOnOffMenuAction.toggle);
+    options.add(option);
+  }
+  options.add(DialogOnOffMenuOption(HeroModel(), "* Växla alla (Ja <-> Nej)", null, DialogOnOffMenuAction.toggleAll, selectValue: 'v'));
+  options.add(DialogOnOffMenuOption(HeroModel(), "= Ta bort valda", null, DialogOnOffMenuAction.returnSelection, selectValue: 's'));
+  options.add(DialogOnOffMenuOption(HeroModel(), "= Avbryt", null, DialogOnOffMenuAction.cancel, selectValue: 'x'));
 
-  bool exit = false;
+  clearScreen();
 
-  while (!exit) {
+  print('--- Radera hjälte ---');
 
-    clearScreen();
+  List<HeroModel>? selectedHeroes = dialogOnOff("Ange vilka som du vill ta bort (Ja=ta bort)", options, "Ja", "Nej", "Välj alternativ: ");
 
-    print('--- Radera hjälte ---');
+  if (selectedHeroes != null && selectedHeroes.isNotEmpty)
+  {
+      print('');
 
-    // Användaren väljer en hjälte
-    HeroModel? selectedHero = dialogSelectHero('', remainingHeroes, 'Ange vilken hjälte som du vill radera: ');
+      HeroDataManaging manager = getManager<HeroDataManaging>();
 
-    // Om hjälte har valts....
-    if (selectedHero != null) 
-    {
-      bool deleted = false;
+      for(int i=0; i<selectedHeroes.length; i++) {
 
-      // Säkerställ att användaren vill ta bort hjälten
-      bool deleteHero = acceptOrDecline('\nÄr du säker på att du vill radera ${selectedHero.name}? (j/n) ', 'j', 'n');
+        String? id = selectedHeroes[i].id;
 
-      
-      if (deleteHero) {
+        if (id != null) {
+          
+          String name = selectedHeroes[i].name ?? 'Okänt namn';
 
-        // Försöker rader hjälte
-        if (selectedHero.id != null) {          
-          HeroDataManaging manager = getManager<HeroDataManaging>();
-          deleted = await manager.deleteHero(selectedHero.id!);
+          stdout.write('\nTar bort $name...');
 
+          bool deleted = await manager.deleteHero(id);
+       
           if (deleted) {
-            remainingHeroes.remove(selectedHero);
+            stdout.write('OK');
             deletedCount++;
           }
-        }      
-
-        // Visar resultat
-        print(deleted ? '\nHjälte har tagits bort.':'\nHjälte kunde inte tas bort.');
-        
-        if (remainingHeroes.isEmpty) {
-          waitForEnter('Det finns inga hjältar kvar. Tryck ENTER för att fortsätta.');
-          exit = true;       
-        }
-        else {
-          waitForEnter('Tryck ENTER för att fortsätta.');
         }
       }
-    }
-    else {
-      exit = true;
-    }
-  }
 
+      waitForEnter('\n\nTryck ENTER för att gå tillbaka till listan.');
+  }
+      
   // true om någon hjälte har tagits bort
   return deletedCount>0;
 }
-
