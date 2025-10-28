@@ -66,11 +66,11 @@ Future<void> menuOptionListHeroes() async {
 
     // Hanterar menyval
     switch(action) {
-      case _MenuAction.editSorting:           
-        sorting = dialogOnOff('Välj inställning för sortering', sorting, ['name','strength'], 'Visa lista', 'PÅ', 'AV', 'Välj ett alternativ: ');
+      case _MenuAction.editSorting:     
+        sorting = await _menuOptionEditSorting(sorting);
         break;
       case _MenuAction.editFilter:        
-        alignmentFilter = dialogOnOff('Välj inställning för filtrering', alignmentFilter, ['good','neutral','bad'], 'Visa lista', 'VISA', 'DÖLJ', 'Välj ett alternativ: ');   
+        alignmentFilter = await _menuOptionEditFilter(alignmentFilter);  
         break;
       case _MenuAction.reset: 
         sorting.clear(); sorting.addAll(defaultSorting);
@@ -92,6 +92,45 @@ Future<void> menuOptionListHeroes() async {
 }
 
 enum _MenuAction { editSorting, editFilter, reset, addHero, deleteHero, exit }
+
+Future<List<String>> _menuOptionEditSorting(List<String> sorting) async {
+  List<DialogOnOffMenuOption<String>> sortingOptions = [ 
+    DialogOnOffMenuOption('name', 'name', sorting.contains('name'), DialogOnOffMenuAction.toggle), 
+    DialogOnOffMenuOption('strength', 'strength', sorting.contains('strength'), DialogOnOffMenuAction.toggle), 
+    DialogOnOffMenuOption('xxxx', 'Visa lista', null, DialogOnOffMenuAction.returnSelection) 
+  ];
+
+  List<String>? selected = dialogOnOff('Välj inställning för sortering', sortingOptions, 'PÅ', 'AV', 'Välj ett alternativ: ');
+
+
+  if (selected != null) {
+    sorting = [];
+    for (int i=0; i<selected.length; i++) {
+      sorting.add(selected[i]);
+    }
+  }
+
+  return sorting;
+}
+Future<List<String>> _menuOptionEditFilter(List<String> alignmentFilter) async {
+  List<DialogOnOffMenuOption<String>> alignmentFilterOptions = [ 
+    DialogOnOffMenuOption('good', 'good', alignmentFilter.contains('good'), DialogOnOffMenuAction.toggle), 
+    DialogOnOffMenuOption('neutral', 'neutral', alignmentFilter.contains('neutral'), DialogOnOffMenuAction.toggle), 
+    DialogOnOffMenuOption('bad', 'bad', alignmentFilter.contains('bad'), DialogOnOffMenuAction.toggle), 
+    DialogOnOffMenuOption('xxxx', 'Visa lista', null, DialogOnOffMenuAction.returnSelection) 
+  ];
+
+  List<String>? selected = dialogOnOff('Välj inställning för filtrering', alignmentFilterOptions, 'VISA', 'DÖLJ', 'Välj ett alternativ: ');
+
+  if (selected != null) {
+    alignmentFilter = [];
+    for (int i=0; i<selected.length; i++) {
+      alignmentFilter.add(selected[i]);
+    }
+  }
+  return alignmentFilter;
+}
+
 
 
 // Tar fram vilka hjältar som ska vara synliga i listan
